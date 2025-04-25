@@ -3,7 +3,7 @@
 @section('title', 'Statistik Agama Pegawai')
 
 @section('content')
-    <h2 class="mb-4">Statistik Pegawai Berdasarkan Agama dan Unit Organisasi</h2>
+    <h2 class="mb-4">Statistik Unit Organisasi Berdasarkan Agama dan Unit Organisasi</h2>
     @if($periodeTerbaru)
         <p class="text-muted">Periode Data Terbaru: {{ \Carbon\Carbon::parse($periodeTerbaru)->translatedFormat('d F Y') }}</p>
     @else
