@@ -12,6 +12,24 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.bunny.net">
   <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
+  <style>
+    .high-contrast {
+        background-color: #000 !important;
+        color: #fff !important;
+    }
+
+    .high-contrast a,
+    .high-contrast button,
+    .high-contrast label {
+        color: #00ff00 !important;
+    }
+
+    body {
+        transition: all 0.2s ease-in-out;
+    }
+</style>
+
 </head>
 
 <body>
@@ -69,6 +87,7 @@
     </div>
   </nav>
 
+
   {{-- Main Content --}}
   <main class="py-4">
     @yield('content')
@@ -79,8 +98,70 @@
     @endif
   </main>
 
+  <!-- Accessibility Widget -->
+<div id="accessibilityWidget" class="position-fixed bottom-0 end-0 m-3" style="z-index: 9999;">
+    <button class="btn btn-primary rounded-circle shadow" onclick="toggleAccessibilityPanel()" title="Aksesibilitas">
+        <i class="bi bi-universal-access-circle fs-4"></i>
+    </button>
+
+    <div id="accessibilityPanel" class="card mt-2 shadow d-none" style="width: 280px;">
+        <div class="card-header py-2 px-3 d-flex justify-content-between align-items-center">
+            <strong class="text-dark">Aksesibilitas</strong>
+            <button class="btn btn-sm btn-close" onclick="toggleAccessibilityPanel()"></button>
+        </div>
+        <div class="card-body small">
+            <button class="btn btn-sm btn-outline-dark w-100 mb-2" onclick="toggleHighContrast()">🌓 Kontras Tinggi</button>
+            <button class="btn btn-sm btn-outline-dark w-100 mb-2" onclick="adjustFontSize(1)">A+ Perbesar Teks</button>
+            <button class="btn btn-sm btn-outline-dark w-100 mb-2" onclick="adjustFontSize(-1)">A- Perkecil Teks</button>
+            <button class="btn btn-sm btn-outline-dark w-100" onclick="resetAccessibility()">🔁 Reset Tampilan</button>
+        </div>
+    </div>
+</div>
+
   {{-- Scripts --}}
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function toggleAccessibilityPanel() {
+        document.getElementById('accessibilityPanel').classList.toggle('d-none');
+    }
+
+    function toggleHighContrast() {
+        document.body.classList.toggle('high-contrast');
+        saveSetting('contrast', document.body.classList.contains('high-contrast'));
+    }
+
+    function adjustFontSize(change) {
+        const root = document.querySelector('html');
+        let currentSize = parseFloat(getComputedStyle(root).fontSize);
+        currentSize += change;
+        root.style.fontSize = currentSize + 'px';
+        saveSetting('fontSize', currentSize);
+    }
+
+    function resetAccessibility() {
+        document.body.classList.remove('high-contrast');
+        document.querySelector('html').style.fontSize = '16px';
+        localStorage.removeItem('contrast');
+        localStorage.removeItem('fontSize');
+    }
+
+    function saveSetting(key, value) {
+        localStorage.setItem(key, value);
+    }
+
+    function loadSettings() {
+        if (localStorage.getItem('contrast') === 'true') {
+            document.body.classList.add('high-contrast');
+        }
+        const fontSize = localStorage.getItem('fontSize');
+        if (fontSize) {
+            document.querySelector('html').style.fontSize = fontSize + 'px';
+        }
+    }
+
+    window.onload = loadSettings;
+</script>
+
 </body>
 
 </html>

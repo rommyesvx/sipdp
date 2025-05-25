@@ -41,20 +41,27 @@
                         <option value="diproses" {{ $permohonan->status === 'diproses' ? 'selected' : '' }}>Diproses</option>
                         <option value="selesai" {{ $permohonan->status === 'selesai' ? 'selected' : '' }}>Selesai</option>
                         <option value="ditolak" {{ $permohonan->status === 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                        <option value="dieskalasi" {{ $permohonan->status === 'dieskalasi' ? 'selected' : '' }}>Eskalasi ke Kepala Bidang</option>
                     </select>
                 </div>
 
-                <div class="mb-3 d-none" id="alasan-penolakan">
-                    <label class="form-label">Alasan Penolakan</label>
-                    <textarea name="alasan_penolakan" class="form-control" rows="3">{{ old('alasan_penolakan', $permohonan->alasan_penolakan) }}</textarea>
-                </div>
+                <div id="non-escalation-fields">
+                    <div class="mb-3 d-none" id="alasan-penolakan">
+                        <label class="form-label">Alasan Penolakan</label>
+                        <textarea name="alasan_penolakan" class="form-control" rows="3">{{ old('alasan_penolakan', $permohonan->alasan_penolakan) }}</textarea>
+                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Upload File Hasil</label>
-                    <input type="file" name="file_hasil" class="form-control">
-                </div>
+                    <div class="mb-3 d-none" id="alasan-penolakan">
+                        <label class="form-label">Alasan Penolakan</label>
+                        <textarea name="alasan_penolakan" class="form-control" rows="3">{{ old('alasan_penolakan', $permohonan->alasan_penolakan) }}</textarea>
+                    </div>
 
-                <button type="submit" class="btn btn-success">Simpan Perubahan</button>
+                    <div class="mb-3">
+                        <label class="form-label">Upload File Hasil</label>
+                        <input type="file" name="file_hasil" class="form-control">
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Simpan Perubahan</button>
             </form>
 
             {{-- If status selesai --}}
@@ -68,7 +75,7 @@
             </a>
             @endif
 
-            {{-- If status selesai --}}
+
             @elseif ($permohonan->status === 'ditolak')
             <div class="alert alert-danger">
                 Permohonan ini telah <strong>ditolak</strong>. Tidak dapat diubah.
@@ -85,6 +92,7 @@
             <script>
                 const statusSelect = document.getElementById('status-select');
                 const alasanDiv = document.getElementById('alasan-penolakan');
+                const nonEscalationFields = document.getElementById('non-escalation-fields');
 
                 function toggleAlasanPenolakan() {
                     if (statusSelect && alasanDiv) {
@@ -99,6 +107,24 @@
                 if (statusSelect) {
                     statusSelect.addEventListener('change', toggleAlasanPenolakan);
                     window.addEventListener('DOMContentLoaded', toggleAlasanPenolakan);
+                }
+
+                function toggleEskalasiView() {
+                    if (statusSelect.value === 'dieskalasi') {
+                        nonEscalationFields.classList.add('d-none');
+                    } else {
+                        nonEscalationFields.classList.remove('d-none');
+                    }
+                }
+                if (statusSelect) {
+                    statusSelect.addEventListener('change', () => {
+                        toggleAlasanPenolakan();
+                        toggleEskalasiView();
+                    });
+                    window.addEventListener('DOMContentLoaded', () => {
+                        toggleAlasanPenolakan();
+                        toggleEskalasiView();
+                    });
                 }
             </script>
 

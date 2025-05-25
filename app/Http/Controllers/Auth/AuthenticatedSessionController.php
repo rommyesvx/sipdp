@@ -33,6 +33,10 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('admin.index');
             
         }
+        else if (Auth::user()->role === 'kepala') {
+            activity()->log('kepala bidang login');
+            return redirect()->route('admin.index');
+        }
         
             activity()->log('User login');
         

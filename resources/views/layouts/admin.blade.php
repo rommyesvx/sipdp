@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
+    <title>Admin Panel</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap 5 -->
@@ -11,25 +11,24 @@
 
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
     <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <!-- jQuery -->
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- DataTables JS -->
-
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.flash.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
 
     <style>
         body {
@@ -47,19 +46,26 @@
             overflow-y: auto;
         }
 
+        .sidebar h4 {
+            padding: 20px;
+            background-color: #343a40;
+            margin: 0;
+            font-size: 18px;
+        }
+
         .sidebar a {
             color: #adb5bd;
             text-decoration: none;
         }
 
-        .sidebar a:hover {
-            background-color: #343a40;
-            color: #fff;
-        }
-
+        .sidebar a:hover,
         .sidebar .nav-link.active {
             background-color: #495057;
             color: #fff !important;
+        }
+
+        .sidebar .nav-link {
+            padding: 10px 20px;
         }
 
         .content {
@@ -88,43 +94,46 @@
 
 <body>
     <!-- Sidebar -->
-    <div class="sidebar d-flex flex-column p-3">
-        <h4 class="text-white mb-4">Admin Panel</h4>
-        <ul class="nav nav-pills flex-column mb-auto">
+    <div class="sidebar d-flex flex-column">
+        <h4 class="text-white text-center">Sistem Informasi Pegawai</h4>
+        <ul class="nav nav-pills flex-column mb-auto mt-2">
+            <li><a href="{{ route('admin.index') }}" class="nav-link {{ request()->is('admin') ? 'active' : '' }}">
+                <i class="bi bi-house"></i> Dashboard</a></li>
+
+            <li><a href="{{ route('admin.permohonan.index') }}" class="nav-link {{ request()->is('admin/permohonan*') ? 'active' : '' }}">
+                <i class="bi bi-archive"></i> Permohonan</a></li>
+
             <li>
-                <a href="{{ route('admin.index') }}" class="nav-link {{ request()->is('admin') ? 'active' : '' }}">
-                    <i class="bi bi-house"></i> Dashboard
+                <a class="nav-link dropdown-toggle" data-bs-toggle="collapse" href="#dataMasterMenu" role="button"
+                    aria-expanded="false" aria-controls="dataMasterMenu">
+                    <i class="bi bi-folder"></i> Data Master
                 </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.permohonan.index') }}" class="nav-link {{ request()->is('admin') ? 'active' : '' }}">
-                    <i class="bi bi-archive"></i> Permohonan
-                </a>
-            </li>
-            <li>
-                <a class="nav-link dropdown-toggle" data-bs-toggle="collapse" href="#menuData" role="button" aria-expanded="false" aria-controls="menuData">
-                    <i class="bi bi-folder2"></i> Data
-                </a>
-                <div class="collapse" id="menuData">
-                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                <div class="collapse" id="dataMasterMenu">
+                    <ul class="list-unstyled ms-3">
                         <li><a href="{{ route('admin.index') }}" class="nav-link">Pegawai</a></li>
                         <li><a href="{{ route('admin.jeniskelamin') }}" class="nav-link">Jenis Kelamin</a></li>
-                        <li><a href="{{ route('admin.tingkatpendidikan') }}" class="nav-link">Tingkat Pendidikan</a></li>
                         <li><a href="{{ route('admin.agama') }}" class="nav-link">Agama</a></li>
+                        <li><a href="{{ route('admin.tingkatpendidikan') }}" class="nav-link">Pendidikan</a></li>
                     </ul>
                 </div>
             </li>
+
+            <li><a href="{{ route('admin.feedback') }}" class="nav-link {{ request()->is('admin/feedback*') ? 'active' : '' }}">
+                <i class="bi bi-chat-dots"></i> Feedback</a></li>
+
+            <li><a href="{{ route('admin.log') }}" class="nav-link {{ request()->is('admin/logs*') ? 'active' : '' }}">
+                <i class="bi bi-clock-history"></i> Log Aktivitas</a></li>
+
+            <li><a href="{{ route('admin.statistik') }}" class="nav-link {{ request()->is('admin/charts*') ? 'active' : '' }}">
+                <i class="bi bi-graph-up"></i> Statistik</a></li>
         </ul>
     </div>
 
-    <!-- Navbar -->
+    <!-- Navbar (Top) -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-        <div class="container-fluid">
-            <span class="navbar-brand">Sistem Informasi Pegawai</span>
-
+        <div class="container-fluid justify-content-end">
             <div class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
-                    data-bs-toggle="dropdown">
+                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
                     <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}"
                         class="rounded-circle me-2" height="32" alt="avatar">
                     {{ Auth::user()->name }}
@@ -142,12 +151,14 @@
         </div>
     </nav>
 
-    <!-- Konten -->
+    <!-- Content -->
     <main class="content">
         @yield('content')
     </main>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @stack('scripts')
 </body>
 
 </html>

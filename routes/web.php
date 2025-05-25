@@ -9,7 +9,7 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\AdminPermohonanController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\KatalogController;
-use App\Http\Controllers\PermohonanDataController;
+use App\Http\Controllers\ActivityLogController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,6 +17,8 @@ Route::get('/', function () {
 
 Route::view('/users/indexUser', 'users.indexUser')
     ->name('tampilLogin');
+    Route::view('/users/kontak', 'users.kontak')
+    ->name('kontak');
 
 
 
@@ -29,7 +31,13 @@ Route::get('/dashboard', function () {
     return view(view: 'dashboard');
 })->middleware(middleware: ['auth', 'verified'])->name(name: 'dashboard');
 
+Route::get('/kepala/pelaporan', function () {
+    return view(view: 'kepala.index');
+})->middleware(middleware: ['auth', 'verified'])->name(name: 'kepala.index');
+
 Route::get('/katalog', [KatalogController::class, 'index'])->name('katalog.index');
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -44,11 +52,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/agama/{periodeTerbaru?}', [PegawaiController::class, 'agama'])->name('admin.agama');
     Route::get('/admin/jeniskelamin/{periodeTerbaru?}', [PegawaiController::class, 'jeniskelamin'])->name('admin.jeniskelamin');
     Route::get('/admin/tingkatpendidikan/{periodeTerbaru?}', [PegawaiController::class, 'tingkatPendidikan'])->name('admin.tingkatpendidikan');
+    Route::get('/admin/statistik', [PegawaiController::class, 'statistik'])->name('admin.statistik');
     Route::get('/admin/permohonan', [AdminPermohonanController::class, 'index'])->name('admin.permohonan.index');
     Route::get('/admin/permohonan/{id}', [AdminPermohonanController::class, 'show'])->name('admin.permohonan.show');
     Route::post('/admin/permohonan/{id}/update', [AdminPermohonanController::class, 'update'])->name('admin.permohonan.update');
     Route::get('/users/detailPermohonan/{id}/download-hasil', [AdminPermohonanController::class, 'downloadHasil'])->name('permohonan.downloadHasil');
     Route::get('/users/detailPermohonan/{id}/download-hasil-pengantar', [AdminPermohonanController::class, 'downloadHasilPengantar'])->name('permohonan.downloadHasilPengantar');
+    Route::get('/admin/feedback', [PegawaiController::class, 'feedbackIndex'])->name('admin.feedback');
+    Route::get('/admin/log', [ActivityLogController::class, 'index'])->name('admin.log');
 });
 
 

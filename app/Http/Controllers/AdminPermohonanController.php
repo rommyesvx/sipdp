@@ -4,14 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\Response;
 use App\Models\PermohonanData;
 use Illuminate\Support\Facades\Log;
-use Spatie\Activitylog\Traits\LogsActivity;
-use App\Mail\PermohonanSelesai;
 
 class AdminPermohonanController extends Controller
 {
+
     public function index()
     {
         $permohonans = PermohonanData::with('user')->latest()->get();
