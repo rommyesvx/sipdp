@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Unor extends Model
 {
-    protected $table = 'unor'; // Sesuaikan dengan nama tabel di database kamu
+    protected $table = 'unor';
 
-    protected $primaryKey = 'unorId'; // Sesuaikan jika primary key bukan 'id'
+    protected $primaryKey = 'unorId'; 
 
-    public $incrementing = false; // Karena unorId mungkin bukan auto-increment
-    protected $keyType = 'string'; // Jika unorId berupa string UUID
+    public $incrementing = false;
+    protected $keyType = 'string'; 
 
-    public $timestamps = false; // Kalau tidak ada created_at dan updated_at
+    public $timestamps = false;
 }

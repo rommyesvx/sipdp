@@ -1,6 +1,5 @@
 @extends('layouts.appUser')
 
-@include('layouts.repeatHeader')
 @section('content')
 
 @section('content')
@@ -30,7 +29,7 @@
                         @if ($permohonan->file_permohonan)
                         <div class="mb-4">
                             <h5 class="text-muted">Surat Pengantar</h5>
-                            <a href="{{ asset('/storage/app/public/' . $permohonan->file_permohonan) }}" target="_blank"
+                            <a href="{{ route('permohonan.downloadHasilPengantar', ['id' => $permohonan->id]) }}" target="_blank"
                                 class="btn btn-outline-primary btn-sm">Lihat Surat</a>
                         </div>
                         @endif
@@ -58,8 +57,7 @@
                                 </h5>
 
                                 @if($permohonan->status == 'selesai' && $permohonan->file_hasil)
-                                <a href="{{ asset('storage/' . $permohonan->file_hasil) }}" class="btn btn-primary mt-3"
-                                    download>
+                                <a href="{{ route('permohonan.downloadHasil', ['id' => $permohonan->id]) }}" class="btn btn-primary mt-3">
                                     <i class="bi bi-download"></i> Download Hasil
                                 </a>
                                 @endif
@@ -108,6 +106,14 @@
                         @endif
                         @endif
 
+                        @if($permohonan->status === 'ditolak' && $permohonan->alasan_penolakan)
+                        <div class="card mt-4 border-danger">
+                            <div class="card-body">
+                                <h5 class="text-danger">Permohonan Ditolak</h5>
+                                <p class="text-danger"><strong>Alasan Penolakan:</strong> {{ $permohonan->alasan_penolakan }}</p>
+                            </div>
+                        </div>
+                        @endif
 
                         <div class="text-center mt-5">
                             <a href="{{ route('users.riwayat') }}" class="btn btn-secondary rounded-pill px-4">Kembali

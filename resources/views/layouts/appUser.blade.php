@@ -5,25 +5,81 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Layanan Data</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
+  <!-- Fonts & Styles -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/bootstrap-icons.svg" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.bunny.net">
+  <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 </head>
 
 <body>
+  {{-- Navbar/Header --}}
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-primary" href="{{ url('/') }}">
+        <img src="{{ asset('logo.png') }}" alt="Logo" height="30" class="me-2">
+        Sistem Permohonan Data Pegawai
+      </a>
 
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('tampilLogin') }}">Beranda</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('tampilFaq') }}">FAQ</a>
+          </li>
 
-  <main class="">
+          @guest
+          <li class="nav-item">
+            <a class="btn btn-outline-primary ms-3" href="{{ route('login') }}">Login</a>
+          </li>
+          @endguest
+
+          @auth
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('users.riwayat') }}">Riwayat Permohonan</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+              data-bs-toggle="dropdown">
+              <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}"
+                class="rounded-circle me-2" height="32" alt="avatar">
+              {{ Auth::user()->name }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow">
+              <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profil</a></li>
+              <li>
+                <form method="POST" action="{{ route('logout') }}">
+                  @csrf
+                  <button class="dropdown-item text-danger">Logout</button>
+                </form>
+              </li>
+            </ul>
+          </li>
+          @endauth
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  {{-- Main Content --}}
+  <main class="py-4">
     @yield('content')
     @if (session('success'))
     <script>
       alert("{{ session('success') }}");
     </script>
-  @endif
-
+    @endif
   </main>
 
+  {{-- Scripts --}}
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

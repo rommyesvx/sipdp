@@ -1,6 +1,5 @@
 @extends('layouts.appUser')
 
-@include('layouts.repeatHeader')
 @section('content')
 
 <section class="py-5 bg-light min-vh-100">

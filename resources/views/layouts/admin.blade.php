@@ -18,6 +18,8 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <!-- DataTables JS -->
 
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -85,7 +87,6 @@
 </head>
 
 <body>
-
     <!-- Sidebar -->
     <div class="sidebar d-flex flex-column p-3">
         <h4 class="text-white mb-4">Admin Panel</h4>
@@ -93,6 +94,11 @@
             <li>
                 <a href="{{ route('admin.index') }}" class="nav-link {{ request()->is('admin') ? 'active' : '' }}">
                     <i class="bi bi-house"></i> Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.permohonan.index') }}" class="nav-link {{ request()->is('admin') ? 'active' : '' }}">
+                    <i class="bi bi-archive"></i> Permohonan
                 </a>
             </li>
             <li>

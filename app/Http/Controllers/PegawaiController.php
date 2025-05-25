@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pegawai;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
-use PDF;
 
 class PegawaiController extends Controller
 {
@@ -25,8 +22,45 @@ class PegawaiController extends Controller
                     'P' => $items->where('jenisKelamin', 'F')->where('periode_data', $periodeTerbaru)->count(),
                 ];
             });
-        return view('admin.jeniskelamin', compact('hasil', 'pegawai', 'periodeTerbaru'));
+        $labels = $hasil->keys();
+        $jumlah_laki = $hasil->pluck('L');
+        $jumlah_perempuan = $hasil->pluck('P'); 
+
+        return view('admin.jeniskelamin', compact('hasil', 'labels', 'jumlah_laki', 'jumlah_perempuan', 'periodeTerbaru'));
     }
+
+    public function index()
+    {
+        $periodeTerbaru = Pegawai::max('periode_data');
+
+        // === Jenis Kelamin ===
+        $jumlah_laki = Pegawai::where('jenisKelamin', 'M')->where('periode_data', $periodeTerbaru)->count();
+        $jumlah_perempuan = Pegawai::where('jenisKelamin', 'F')->where('periode_data', $periodeTerbaru)->count();
+
+        //Agama
+        $agamaData = Pegawai::where('periode_data', $periodeTerbaru)
+            ->select('agama')
+            ->get()
+            ->groupBy('agama')
+            ->map(fn($group) => $group->count());
+
+        // === Tingkat Pendidikan ===
+        $pendidikanData = Pegawai::whereNotNull('tkPendidikanTerakhir')
+            ->where('periode_data', $periodeTerbaru)
+            ->select('tkPendidikanTerakhir')
+            ->get()
+            ->groupBy('tkPendidikanTerakhir')
+            ->map(fn($group) => $group->count());
+
+        return view('admin.index', [
+            'jumlah_laki' => $jumlah_laki,
+            'jumlah_perempuan' => $jumlah_perempuan,
+            'agama_data' => $agamaData,
+            'pendidikan_data' => $pendidikanData,
+            'periodeTerbaru' => $periodeTerbaru
+        ]);
+    }
+
 
     public function tingkatPendidikan($periodeTerbaru = null)
     {
@@ -52,7 +86,7 @@ class PegawaiController extends Controller
 
         $pegawai = Pegawai::with('unorInduk')
             ->select('unorIndukId', 'agama', 'periode_data')
-            ->where('periode_data', $periodeTerbaru) 
+            ->where('periode_data', $periodeTerbaru)
             ->get();
 
         $hasil = $pegawai->groupBy(fn($p) => $p->unorInduk->NamaUnor ?? 'Tidak Diketahui')

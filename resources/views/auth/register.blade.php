@@ -32,6 +32,15 @@
           @enderror
         </div>
 
+        <!-- Nomor HP -->
+        <div class="mb-3">
+          <label for="name" class="form-label">Nomor HP</label>
+          <input type="text" id="no_hp" name="no_hp" class="form-control rounded-3" value="{{ old('no_hp') }}" required autofocus autocomplete="no_hp">
+          @error('no_hp')
+            <div class="text-danger mt-1">{{ $message }}</div>
+          @enderror
+        </div>
+
         <!-- Email -->
         <div class="mb-3">
           <label for="email" class="form-label">Alamat Email</label>

@@ -14,14 +14,14 @@ class RequestDataController extends Controller
     }
     public function store(Request $request)
     {
-         //dd($request->all());
-        $request->validate([
-            'tujuan' => 'required|string',
-            'tipe' => 'required|string',
-            'jenis_data' => 'required|string',
-            'file_permohonan' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-            'catatan' => 'nullable|string',
-        ]);
+
+        // $request->validate([
+        //     'tujuan' => 'required|string',
+        //     'tipe' => 'required|string',
+        //     'jenis_data' => 'required|string',
+        //     'file_permohonan' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+        //     'catatan' => 'nullable|string',
+        // ]);
 
         $path = null;
         if ($request->hasFile('file_permohonan')) {
@@ -29,7 +29,7 @@ class RequestDataController extends Controller
         }
 
         PermohonanData::create([
-            'user_id' => Auth::id(), // Ambil ID user dari sesi login
+            'user_id' => Auth::id(),
             'tujuan' => $request->input('tujuan'),
             'tipe' => $request->input('tipe'),
             'jenis_data' => $request->input('jenis_data'),

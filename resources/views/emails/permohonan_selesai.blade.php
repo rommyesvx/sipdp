@@ -4,9 +4,8 @@
     <title>Permohonan Selesai</title>
 </head>
 <body>
-    <p>Halo {{ $permohonan->user->name }},</p>
-    <p>Permohonan data pegawai Anda dengan ID <strong>{{ $permohonan->id }}</strong> telah selesai diproses.</p>
-    <p>Silakan login ke sistem untuk melihat detailnya.</p>
-    <p>Terima kasih.</p>
+<p>Halo {{ $permohonan->user->name }},</p>
+<p>Permohonan data Anda telah selesai diproses. Silakan login untuk melihat dan mengunduh hasilnya.</p>
+<p>Terima kasih.</p>
 </body>
 </html>

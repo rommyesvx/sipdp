@@ -1,5 +1,5 @@
 @extends('layouts.appUser')
-@include('layouts.repeatHeader')
+
 @section('content')
 <section class="bg-white py-5">
   <div class="container">
@@ -11,8 +11,7 @@
           <span class="text-primary">Pemerintah Kota Blitar</span>
         </h1>
         <p class="lead text-muted mb-4">
-          Ajukan permintaan data, eksplorasi katalog, dan akses informasi kesehatan nasional dengan mudah dan cepat melalui sistem digital yang terintegrasi.
-        </p>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis pellentesque mi ac ipsum vehicula elementum at quis nisi.        </p>
         <div class="d-flex justify-content-center justify-content-md-start gap-3">
           <a href="{{ route('permohonan.form') }}" class="btn btn-primary btn-lg rounded-pill px-4">Ajukan Permintaan</a>
           <a href="#" class="btn btn-outline-secondary btn-lg rounded-pill px-4">Lihat Katalog</a>
@@ -38,7 +37,7 @@
             </div>
             <h5 class="card-title fw-bold">Katalog Data</h5>
             <p class="card-text text-muted">Jelajahi berbagai data yang tersedia secara terbuka.</p>
-            <a href="#" class="btn btn-outline-primary rounded-pill mt-3">Lihat Katalog</a>
+            <a href="{{ route('katalog.index') }}" class="btn btn-outline-primary rounded-pill mt-3">Lihat Katalog</a>
           </div>
         </div>
       </div>

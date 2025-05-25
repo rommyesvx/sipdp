@@ -29,8 +29,13 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         if (Auth::user()->role === 'admin') {
+            activity()->log('admin login');
             return redirect()->route('admin.index');
+            
         }
+        
+            activity()->log('User login');
+        
     
         return redirect()->route('tampilLogin');
     }
