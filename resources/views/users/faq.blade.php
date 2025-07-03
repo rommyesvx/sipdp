@@ -1,107 +1,144 @@
-@extends('layouts.appUser')
+@extends('layouts.newAppUser')
+
+@section('title', 'Frequently Asked Questions')
+
 @section('content')
-
-
-
-    <!-- Hero Section -->
-    <section class="bg-primary text-white py-5 text-center">
-        <div class="container">
-            <h1 class="display-5 fw-bold">Frequently Asked Questions</h1>
-            <p class="lead">Jawaban atas pertanyaan umum mengenai sistem layanan data</p>
+<div class="container my-4 my-md-5">
+    <div class="row">
+        {{-- Kolom Kiri --}}
+        <div class="col-lg-4 mb-5 mb-lg-0">
+          
+            <h2 class="fw-bold">Frequently Asked Questions</h2>
+            <p class="text-muted fs-7">Masih butuh bantuan? <a href="{{ route('contactus') }}" class="text-primary fw-medium">Hubungi Kami</a></p>
         </div>
-    </section>
 
-    <!-- FAQ Section -->
-    <section class="py-5 bg-light">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="accordion accordion-flush" id="faqAccordion">
+        {{-- Kolom Kanan (Accordion FAQ) --}}
+        <div class="col-lg-8">
+         
+            <div class="accordion accordion-flush" id="faqAccordion">
 
-                        <div class="accordion-item mb-3 border rounded-3 shadow-sm">
-                            <h2 class="accordion-header" id="faq1">
-                                <button class="accordion-button fw-semibold collapsed" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="false"
-                                    aria-controls="collapse1">
-                                    Bagaimana cara mengajukan permohonan data?
-                                </button>
-                            </h2>
-                            <div id="collapse1" class="accordion-collapse collapse" aria-labelledby="faq1"
-                                data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    Anda dapat mengajukan permohonan data dengan terlebih dahulu mendaftar akun, kemudian
-                                    login dan isi formulir permohonan data pada menu “Pengajuan Permohonan”.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="accordion-item mb-3 border rounded-3 shadow-sm">
-                            <h2 class="accordion-header" id="faq2">
-                                <button class="accordion-button fw-semibold collapsed" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false"
-                                    aria-controls="collapse2">
-                                    Apakah saya bisa melacak status pengajuan saya?
-                                </button>
-                            </h2>
-                            <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="faq2"
-                                data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    Ya. Setelah Anda mengajukan permohonan, Anda dapat melacak statusnya melalui menu “Lacak
-                                    Permintaan”.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="accordion-item mb-3 border rounded-3 shadow-sm">
-                            <h2 class="accordion-header" id="faq3">
-                                <button class="accordion-button fw-semibold collapsed" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false"
-                                    aria-controls="collapse3">
-                                    Siapa saja yang bisa mengakses data ini?
-                                </button>
-                            </h2>
-                            <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="faq3"
-                                data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    Pengguna yang telah diverifikasi oleh sistem dapat mengakses data yang tersedia, sesuai
-                                    dengan hak akses yang diberikan.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="accordion-item mb-3 border rounded-3 shadow-sm">
-                            <h2 class="accordion-header" id="faq4">
-                                <button class="accordion-button fw-semibold collapsed" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false"
-                                    aria-controls="collapse4">
-                                    Bagaimana jika saya lupa password akun saya?
-                                </button>
-                            </h2>
-                            <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="faq4"
-                                data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    Silakan klik "Lupa Password" di halaman login, lalu ikuti instruksi pemulihan yang
-                                    dikirim ke email Anda.
-                                </div>
-                            </div>
+                {{-- Item FAQ 1 --}}
+                <div class="accordion-item mb-4">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Bagaimana cara mengajukan permohonan data?
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted">
+                            Anda dapat mengajukan permohonan data dengan terlebih dahulu mendaftar akun, kemudian login dan isi formulir permohonan data pada menu "Pengajuan Permohanan".
                         </div>
                     </div>
                 </div>
+
+                {{-- Item FAQ 2 --}}
+                <div class="accordion-item mb-4">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Apakah saya bisa melacak status pengajuan saya?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted">
+                            Tentu. Setelah Anda mengajukan permohonan, Anda dapat melacak statusnya secara real-time melalui menu "Riwayat Permohonan" di dashboard akun Anda. Kami akan memberikan pembaruan status mulai dari pengajuan diterima, diproses, hingga selesai.
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Item FAQ 3 --}}
+                <div class="accordion-item mb-4">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            Siapa saja yang bisa mengakses data ini?
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted">
+                            Akses terhadap data pegawai bersifat terbatas dan hanya diberikan kepada pihak-pihak yang berwenang dan telah melalui proses verifikasi. Setiap permohonan akan dievaluasi untuk memastikan bahwa data digunakan untuk tujuan yang sah dan sesuai dengan kebijakan privasi yang berlaku.
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Item FAQ 4 --}}
+                <div class="accordion-item mb-4">
+                    <h2 class="accordion-header" id="headingFour">
+                        <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            Bagaimana jika saya lupa password akun saya?
+                        </button>
+                    </h2>
+                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted">
+                            Jika Anda lupa password, silakan klik tautan "Lupa Password" yang tersedia di halaman login. Anda akan diminta untuk memasukkan alamat email yang terdaftar, dan kami akan mengirimkan instruksi untuk mereset password Anda melalui email tersebut.
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            <!--Start of Tawk.to Script-->
-            <script type="text/javascript">
-                var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-                (function () {
-                    var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-                    s1.async = true;
-                    s1.src = 'https://embed.tawk.to/67ff58053b6a28190b6309e5/1ioumvm6k';
-                    s1.charset = 'UTF-8';
-                    s1.setAttribute('crossorigin', '*');
-                    s0.parentNode.insertBefore(s1, s0);
-                })();
-            </script>
-            <!--End of Tawk.to Script-->
         </div>
-    </section>
-    @include('layouts.repeatFooter')
+    </div>
+</div>
 @endsection
+
+@push('styles')
+<style>
+    /*
+     * CSS KUSTOM UNTUK HALAMAN FAQ
+     * Sesuai permintaan:
+     * 1. Tombol ikon di kiri.
+     * 2. Tidak ada border/stroke pada item.
+     * 3. Tampilan lebih lega dan bersih.
+    */
+
+    /* Menggunakan accordion-flush untuk menghilangkan border default dan corner-radius */
+    .accordion-flush .accordion-item {
+        border-bottom: 1px solid #dee2e6; /* Garis pemisah antar item */
+    }
+    
+    .accordion-flush .accordion-item:last-child {
+        border-bottom: 0;
+    }
+
+    .accordion-button {
+        padding-left: 2.25rem; /* Memberi ruang untuk ikon kustom di kiri */
+        position: relative;
+        background-color: transparent !important;
+        color: #212529 !important;
+        box-shadow: none !important;
+    }
+    
+    /* Tombol saat aktif/terbuka */
+    .accordion-button:not(.collapsed) {
+        color: #0d6efd !important;
+    }
+    
+    /* Sembunyikan ikon panah default dari Bootstrap */
+    .accordion-button::after {
+        display: none;
+    }
+
+    /* Buat ikon panah kustom menggunakan pseudo-element ::before */
+    .accordion-button::before {
+        content: '\f078'; /* Kode ikon panah bawah dari Font Awesome */
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        position: absolute;
+        left: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%) rotate(0deg);
+        transition: transform 0.2s ease-in-out;
+        font-size: 0.9rem;
+        color: #6c757d; /* Warna ikon */
+    }
+
+    /* Putar ikon saat accordion terbuka */
+    .accordion-button:not(.collapsed)::before {
+        transform: translateY(-50%) rotate(-180deg);
+        color: #0d6efd; /* Warna ikon saat aktif */
+    }
+
+    /* Padding untuk body accordion agar lebih lega */
+    .accordion-body {
+        padding: 0.5rem 1rem 1.75rem 2.25rem;
+    }
+</style>
+@endpush

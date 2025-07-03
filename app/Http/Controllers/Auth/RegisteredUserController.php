@@ -49,6 +49,6 @@ class RegisteredUserController extends Controller
 
         activity()->log('New registered user');
 
-        return redirect(route('tampilLogin', absolute: false));
+        return redirect(route('dashboardUser', absolute: false));
     }
 }

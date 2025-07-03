@@ -35,13 +35,13 @@ class AuthenticatedSessionController extends Controller
         }
         else if (Auth::user()->role === 'kepala') {
             activity()->log('kepala bidang login');
-            return redirect()->route('admin.index');
+            return redirect()->route('kepala.dashboard');
         }
         
             activity()->log('User login');
         
     
-        return redirect()->route('tampilLogin');
+        return redirect()->route('dashboardUser');
     }
 
     /**
@@ -55,6 +55,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/users/indexUser');
+        return redirect('dashboard-user');
     }
 }

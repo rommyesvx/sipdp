@@ -24,5 +24,21 @@ class FeedbackController extends Controller
 
     return back()->with('success', 'Feedback berhasil dikirim.');
 }
+    public function updateEvaluasi(Request $request, $id)
+    {
+        $request->validate([
+            'catatan_evaluasi' => 'required|string|min:10',
+        ]);
+
+        $feedback = Feedback::findOrFail($id);
+
+        // Update kolom catatan_evaluasi dan simpan
+        $feedback->catatan_evaluasi = $request->catatan_evaluasi;
+        $feedback->save();
+
+
+        // Kembali ke halaman sebelumnya dengan pesan sukses
+        return redirect()->back()->with('success', 'Catatan evaluasi berhasil disimpan!');
+    }
 
 }

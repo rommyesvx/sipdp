@@ -1,55 +1,43 @@
-<section class="space-y-6">
+<section>
     <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Hapus Akun') }}
+        <h2 class="h4 fw-bold text-dark">
+            Hapus Akun
         </h2>
-
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __('Setelah akun Anda dihapus, semua sumber daya dan datanya akan dihapus secara permanen. Sebelum menghapus akun Anda, harap unduh data atau informasi apa pun yang ingin Anda simpan.') }}
+        <p class="mt-1 text-muted">
+            Setelah akun Anda dihapus, semua data akan dihapus secara permanen.
         </p>
     </header>
 
-    <x-danger-button
-        x-data=""
-        x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
-    >{{ __('Hapus Akun') }}</x-danger-button>
+    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirm-user-deletion">
+        Hapus Akun
+    </button>
 
-    <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
-        <form method="post" action="{{ route('profile.destroy') }}" class="p-6">
-            @csrf
-            @method('delete')
+    <div class="modal fade" id="confirm-user-deletion" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form method="post" action="{{ route('profile.destroy') }}" class="p-4">
+                    @csrf
+                    @method('delete')
 
-            <h2 class="text-lg font-medium text-gray-900">
-                {{ __('Apakah anda yakin untuk menghapus akuna anda?') }}
-            </h2>
+                    <h5 class="modal-title mb-3 fw-bold">
+                        Apakah Anda yakin ingin menghapus akun Anda?
+                    </h5>
+                    <p class="text-muted">
+                        Sekali lagi, semua data Anda akan dihapus permanen. Mohon masukkan password Anda untuk mengonfirmasi penghapusan akun.
+                    </p>
 
-            <p class="mt-1 text-sm text-gray-600">
-                {{ __('Setelah akun Anda dihapus, semua sumber daya dan datanya akan dihapus secara permanen. Sebelum menghapus akun Anda, harap unduh data atau informasi apa pun yang ingin Anda simpan.') }}
-            </p>
+                    <div class="mt-3">
+                        <label for="password_delete" class="form-label visually-hidden">Password</label>
+                        <input id="password_delete" name="password" type="password" class="form-control @error('password', 'userDeletion') is-invalid @enderror" placeholder="Password">
+                        @error('password', 'userDeletion')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
 
-            <div class="mt-6">
-                <x-input-label for="password" value="{{ __('Password') }}" class="sr-only" />
-
-                <x-text-input
-                    id="password"
-                    name="password"
-                    type="password"
-                    class="mt-1 block w-3/4"
-                    placeholder="{{ __('Password') }}"
-                />
-
-                <x-input-error :messages="$errors->userDeletion->get('password')" class="mt-2" />
+                    <div class="mt-4 d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger">Hapus Akun</button>
+                    </div>
+                </form>
             </div>
-
-            <div class="mt-6 flex justify-end">
-                <x-secondary-button x-on:click="$dispatch('close')">
-                    {{ __('Cancel') }}
-                </x-secondary-button>
-
-                <x-danger-button class="ms-3">
-                    {{ __('Hapus Akun') }}
-                </x-danger-button>
-            </div>
-        </form>
-    </x-modal>
+        </div>
+    </div>
 </section>
