@@ -50,7 +50,16 @@
         <h1 class="h3 fw-bold mb-0 text-gray-800">Daftar Permohonan</h1>
         <span class="text-muted">Total: {{ $permohonans->total() }} permohonan</span>
     </div>
-
+    @if (request()->has('status'))
+    <div class="alert alert-info d-flex justify-content-between align-items-center mb-4">
+        <span>
+            Saat ini menampilkan permohonan dengan status: <strong class="text-capitalize">{{ request('status') }}</strong>
+        </span>
+        <a href="{{ route('admin.permohonan.index') }}" class="btn btn-sm btn-info text-white">
+            <i class="fas fa-times me-1"></i> Reset Filter & Tampilkan Semua
+        </a>
+    </div>
+    @endif
     <div class="card shadow-sm border-0">
         <div class="card-body">
             <div class="table-responsive table-container">
@@ -95,12 +104,18 @@
                                 <span class="badge rounded-pill fw-medium status-badge d-inline-flex align-items-center bg-info-subtle text-info-emphasis">
                                     <i class="fas fa-check-double me-1"></i> Disetujui Kepala Bidang
                                 </span>
+                                @elseif($permohonan->status == 'ditolak kepala bidang')
+                                <span class="badge rounded-pill fw-medium status-badge d-inline-flex align-items-center bg-danger-subtle text-danger-emphasis">
+                                    <i class="fas fa-gavel me-1"></i> Ditolak oleh Atasan
+                                </span>
                                 @else
                                 <span class="badge rounded-pill fw-medium status-badge d-inline-flex align-items-center bg-warning-subtle text-warning-emphasis"><i class="fas fa-clock me-1"></i> Diproses</span>
                                 @endif
+                                <small class="text-muted d-block mt-1" title="Terakhir diupdate pada {{ $permohonan->updated_at->format('d M Y, H:i') }}">
+                                    ( {{ $permohonan->updated_at->diffForHumans() }})
+                                </small>
                             </td>
                             <td class="text-center">
-                                {{-- Menambahkan onclick untuk mencegah event bubbling --}}
                                 <a href="{{ route('admin.permohonan.show', $permohonan->id) }}" onclick="event.stopPropagation();" class="btn btn-sm btn-outline-primary rounded-pill px-3">
                                     Detail
                                 </a>
@@ -117,7 +132,6 @@
         </div>
     </div>
 
-    {{-- Pagination Links --}}
     <div class="d-flex justify-content-center mt-4">
         {{ $permohonans->appends(request()->query())->links('pagination::bootstrap-5') }}
     </div>
@@ -125,10 +139,8 @@
 @endsection
 @push('scripts')
 <script>
-    // Menambahkan event listener ke semua baris yang memiliki atribut data-href
     document.querySelectorAll('tr[data-href]').forEach(row => {
         row.addEventListener('click', function() {
-            // Arahkan ke URL yang ada di atribut data-href
             window.location.href = this.dataset.href;
         });
     });

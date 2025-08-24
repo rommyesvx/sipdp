@@ -19,7 +19,7 @@ class RiwayatPermohonanController extends Controller
 
         $permohonans = PermohonanData::where('user_id', $user->id)
             ->orderBy($sort, $direction)
-            ->paginate(5);
+            ->paginate(10);
 
         return view('users.riwayat', [
             'permohonans' => $permohonans,
@@ -30,7 +30,7 @@ class RiwayatPermohonanController extends Controller
     public function show($id)
     {
         $permohonan = PermohonanData::where('id', $id)
-            ->where('user_id', auth()->id()) 
+            ->where('user_id', auth()->id())
             ->firstOrFail();
 
         return view('users.detailPermohonan', compact('permohonan'));
@@ -42,11 +42,33 @@ class RiwayatPermohonanController extends Controller
         if (auth()->id() !== $permohonan->user_id) {
             abort(403, 'Unauthorized');
         }
+        $filePengantar = $permohonan->suratPengantar;
 
-        if (!$permohonan->file_permohonan || !Storage::disk('public')->exists($permohonan->file_permohonan)) {
+        if (!$filePengantar || !Storage::disk('public')->exists($filePengantar->path)) {
             return back()->with('error', 'File surat pengantar tidak ditemukan.');
         }
 
-       return Storage::disk('public')->response($permohonan->file_permohonan);
+        return Storage::disk('public')->response($filePengantar->path, $filePengantar->nama_asli_file);
+    }
+    public function downloadHasil($id)
+    {
+        $permohonan = PermohonanData::findOrFail($id);
+
+        if (auth()->id() !== $permohonan->user_id) {
+            abort(403, 'Akses Ditolak');
+        }
+
+        $fileHasil = $permohonan->fileHasil;
+
+        if (!$fileHasil || !Storage::disk('public')->exists($fileHasil->path)) {
+            return back()->with('error', 'File hasil tidak ditemukan atau belum diunggah oleh admin.');
+        }
+
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($permohonan)
+            ->log('Pengguna mengunduh file hasil.');
+
+        return Storage::disk('public')->response($fileHasil->path, $fileHasil->nama_asli_file);
     }
 }

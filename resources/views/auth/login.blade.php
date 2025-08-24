@@ -126,7 +126,6 @@
             </div>
 
             <div class="col-lg-6 d-none d-lg-flex image-column">
-                {{-- Anda bisa mengganti URL gambar ini dengan gambar milik Anda --}}
                 <img src="https://cdni.iconscout.com/illustration/premium/thumb/login-3305943-2757111.png" alt="Login Illustration">
             </div>
 

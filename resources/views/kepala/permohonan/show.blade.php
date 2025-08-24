@@ -64,92 +64,87 @@
 
     <div class="row g-4">
         <div class="col-lg-8">
+
+            <!-- Card: Informasi Permohonan (Admin-style) -->
             <div class="card shadow-sm border-0 rounded-4 mb-4 detail-card">
                 <div class="card-header py-3">
-                    <h5 class="m-0 fw-bold text-primary">Data Pemohon</h5>
+                    <h5 class="m-0 fw-bold text-primary">Informasi Permohonan</h5>
                 </div>
                 <div class="card-body">
-                    <dl class="row mb-0">
-                        <dt class="col-sm-4">Nama Pemohon</dt>
-                        <dd class="col-sm-8">{{ $permohonan->user->name }}</dd>
-
-                        <dt class="col-sm-4">Asal Instansi</dt>
-                        <dd class="col-sm-8 text-capitalize">{{ $permohonan->asal }}</dd>
-                    </dl>
-                </div>
-            </div>
-
-            <div class="card shadow-sm border-0 rounded-4 mb-4 detail-card">
-                <div class="card-header py-3">
-                    <h5 class="m-0 fw-bold text-primary">Detail Permintaan</h5>
-                </div>
-                <div class="card-body">
-                    <dl class="row mb-0">
-                        <dt class="col-sm-4">Tanggal Diajukan</dt>
-                        <dd class="col-sm-8">{{ $permohonan->created_at->format('d M Y, H:i') }}</dd>
-
-                        <dt class="col-sm-4">Tujuan Permohonan</dt>
-                        <dd class="col-sm-8">{{ $permohonan->tujuan }}</dd>
-
-                        @if ($permohonan->tujuan == 'Lainnya' && $permohonan->tujuan_lainnya_text)
-                        <dt class="col-sm-4">Tujuan Lainnya</dt>
-                        <dd class="col-sm-8"><em>{{ $permohonan->tujuan_lainnya_text }}</em></dd>
-                        @endif
-
-                        <dt class="col-sm-4">Jenis Data Diminta</dt>
-                        <dd class="col-sm-8">{!! $permohonan->formatted_jenis_data !!}</dd>
-
-                        <dt class="col-sm-4">Jenis Data Diminta</dt>
-                        <dd class="col-sm-8">
-                            @if(!empty($permohonan->kolom_diminta) && \Illuminate\Support\Str::isJson($permohonan->kolom_diminta))
-                            <div class="mb-4">
-                                <div>
+                    <div class="row g-0 align-items-center">
+                        <div class="col-md-4 d-flex flex-column align-items-center justify-content-center py-4">
+                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mb-2" style="width:70px;height:70px;font-size:2rem;font-weight:700;color:#6759ff;">
+                                {{ strtoupper(Str::substr($permohonan->user->name,0,2)) }}
+                            </div>
+                            <div class="text-center">
+                                <div class="fw-bold fs-5 mb-1">{{ $permohonan->user->name }}</div>
+                                <div class="text-muted small">{{ $permohonan->asal }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-8 py-4">
+                            <div class="row mb-2">
+                                <div class="col-6 mb-2">
+                                    <span class="fw-semibold text-muted small">Tanggal Diajukan</span><br>
+                                    <span>{{ $permohonan->created_at->format('d M Y, H:i') }}</span>
+                                </div>
+                                <div class="col-6 mb-2">
+                                    <span class="fw-semibold text-muted small">Tipe File</span><br>
+                                    <span class="text-uppercase">{{ $permohonan->tipe }}</span>
+                                </div>
+                                <div class="col-12 mb-2">
+                                    <span class="fw-semibold text-muted small">Tujuan Permohonan</span><br>
+                                    <span>{{ $permohonan->tujuan }}</span>
+                                    @if ($permohonan->tujuan == 'Lainnya' && $permohonan->tujuan_lainnya_text)
+                                        <br><span class="fst-italic text-muted">{{ $permohonan->tujuan_lainnya_text }}</span>
+                                    @endif
+                                </div>
+                                <div class="col-12 mb-2">
+                                    <span class="fw-semibold text-muted small">Jenis Data Diminta</span><br>
+                                    {!! $permohonan->formatted_jenis_data !!}
+                                </div>
+                                @if(!empty($permohonan->kolom_diminta) && \Illuminate\Support\Str::isJson($permohonan->kolom_diminta))
+                                <div class="col-12 mb-2">
+                                    <span class="fw-semibold text-muted small">Kolom Data Diminta</span><br>
                                     @php
-                                    // Decode string JSON menjadi array
                                     $kolomList = json_decode($permohonan->kolom_diminta, true);
-
                                     $columnLabels = [
-                                    'nama' => 'Nama Lengkap', 'nipBaru' => 'NIP Baru', 'nik' => 'NIK',
-                                    'agama' => 'Agama', 'jenisKelamin' => 'Jenis Kelamin', 'alamat' => 'Alamat',
-                                    'statusPegawai' => 'Status Pegawai', 'masaKerjaTahun' => 'Masa Kerja (Tahun)',
-                                    'masaKerjaBulan' => 'Masa Kerja (Bulan)', 'jabatanNama' => 'Nama Jabatan',
-                                    'satuanKerjaKerjaNama' => 'Departemen', 'golRuangAkhir' => 'Golongan',
-                                    'pendidikanTerakhirNama' => 'Pendidikan Terakhir',
+                                        'nama' => 'Nama Lengkap', 'nipBaru' => 'NIP Baru', 'nik' => 'NIK',
+                                        'agama' => 'Agama', 'jenisKelamin' => 'Jenis Kelamin', 'alamat' => 'Alamat',
+                                        'statusPegawai' => 'Status Pegawai', 'masaKerjaTahun' => 'Masa Kerja (Tahun)',
+                                        'masaKerjaBulan' => 'Masa Kerja (Bulan)', 'jabatanNama' => 'Nama Jabatan',
+                                        'satuanKerjaKerjaNama' => 'Departemen', 'golRuangAkhir' => 'Golongan',
+                                        'pendidikanTerakhirNama' => 'Pendidikan Terakhir',
                                     ];
                                     @endphp
-
                                     @if(is_array($kolomList) && !empty($kolomList))
                                     <div class="d-flex flex-wrap gap-1">
                                         @foreach($kolomList as $kolom)
                                         <span class="badge text-dark-emphasis bg-light-subtle border fw-medium">
-                                            {{-- Tampilkan label dari kamus, atau nama kolom asli jika tidak ada --}}
                                             {{ $columnLabels[$kolom] ?? ucfirst(str_replace('_', ' ', $kolom)) }}
                                         </span>
                                         @endforeach
                                     </div>
                                     @endif
                                 </div>
+                                @endif
+                                @if ($permohonan->catatan)
+                                <div class="col-12 mb-2">
+                                    <span class="fw-semibold text-muted small">Catatan Tambahan</span><br>
+                                    <span>{{ $permohonan->catatan }}</span>
+                                </div>
+                                @endif
+                                @if ($permohonan->file_permohonan)
+                                <div class="col-12 mb-2">
+                                    <span class="fw-semibold text-muted small">Surat Pengantar</span><br>
+                                    <a href="{{ route('kepala.permohonan.downloadSurat', ['id' => $permohonan->suratPengantar->id]) }}" target="_blank" class="text-decoration-none">
+                                        <i class="fas fa-file-pdf text-danger"></i>
+                                        {{ $permohonan->suratPengantar->nama_asli_file }}
+                                    </a>
+                                </div>
+                                @endif
                             </div>
-                            @endif
-                        </dd>
-
-                        <dt class="col-sm-4">Tipe File</dt>
-                        <dd class="col-sm-8 text-uppercase">{{ $permohonan->tipe }}</dd>
-
-                        @if ($permohonan->catatan)
-                        <dt class="col-sm-4">Catatan Tambahan</dt>
-                        <dd class="col-sm-8">{{ $permohonan->catatan }}</dd>
-                        @endif
-
-                        @if ($permohonan->file_permohonan)
-                        <dt class="col-sm-4">Surat Pengantar</dt>
-                        <dd class="col-sm-8">
-                            <a href="#" {{-- Ganti dengan route download surat --}} class="text-decoration-none">
-                                <i class="fas fa-file-pdf text-danger"></i> Lihat Surat
-                            </a>
-                        </dd>
-                        @endif
-                    </dl>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -192,33 +187,25 @@
             </div>
             <hr>
         </div>
-
-        {{-- =============================================== --}}
-        {{-- KOLOM KANAN: FORM PERSETUJUAN DENGAN DESAIN BARU --}}
-        {{-- =============================================== --}}
         <div class="col-lg-4">
             <form method="POST" action="{{ route('kepala.permohonan.update', $permohonan->id) }}">
                 @csrf
                 @method('POST')
-                <div class="card shadow-sm border-0 rounded-4 position-sticky top-0">
+                <div class="card shadow-sm border-0 rounded-4 position-sticky top-0 action-card">
                     <div class="card-body p-4">
-                        <h5 class="fw-bold d-flex align-items-center mb-3">
-                            <i class="fas fa-exchange-alt me-2 text-muted"></i> Tindakan Permohonan
-                        </h5>
-
-                        {{-- Menampilkan alasan eskalasi dari admin --}}
-                        @if($permohonan->alasan_eskalasi)
-                        <div class="alert alert-light border-start border-5 border-primary py-3 mb-4">
-                            <p class="fw-bold mb-1 text-primary"><i class="fas fa-info-circle me-2"></i>Permohonan ini dieskalasi</p>
-                            <p class="mb-0 small">{{ $permohonan->alasan_eskalasi }}</p>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-edit fs-4 me-3 text-primary"></i>
+                            <h5 class="m-0 fw-bold">Ubah Status Permohonan</h5>
                         </div>
+
+                        @if($permohonan->alasan_eskalasi)
+                        <div class="alert alert-info small mb-3"><strong class="d-block">Catatan dari Admin:</strong>"{{ $permohonan->alasan_eskalasi }}"</div>
                         @endif
 
-                        {{-- Input tersembunyi untuk menyimpan keputusan --}}
                         <input type="hidden" name="keputusan" id="keputusanInput" value="">
 
-                        {{-- Tombol-tombol pilihan keputusan --}}
-                        <div id="decision-buttons-container" class="d-grid gap-3">
+                        <p class="small text-muted">Pilih salah satu tindakan di bawah ini.</p>
+                        <div id="decision-buttons-container" class="d-grid gap-3 mb-3">
                             <button type="button" class="btn btn-decision btn-approve" data-keputusan="setujui">
                                 <span class="icon-circle"><i class="fas fa-check"></i></span> Setujui Permohonan
                             </button>
@@ -227,7 +214,6 @@
                             </button>
                         </div>
 
-                        {{-- Form catatan yang akan muncul setelah tombol diklik --}}
                         <div id="catatan-form-section" class="d-none">
                             <hr>
                             <div class="mb-3">
@@ -237,10 +223,9 @@
                             </div>
                             <div class="d-flex justify-content-between">
                                 <button type="button" id="cancel-decision-btn" class="btn btn-sm btn-secondary">Batal</button>
-                                <button type="submit" class="btn btn-primary fw-bold">Kirim Keputusan</button>
+                                <button type="submit" class="btn btn-primary rounded-pill fw-bold">Kirim Keputusan</button>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </form>

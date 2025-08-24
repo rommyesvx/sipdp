@@ -17,7 +17,7 @@
                     </p>
                     <div class="d-flex gap-3">
                         <a href="{{ route('permohonan.form') }}" class="btn btn-dark px-4 py-2">Ajukan Sekarang</a>
-                        <a href="#" class="btn btn-outline-dark px-4 py-2">Lacak Status</a>
+                        <a href="{{ route('users.riwayat') }}" class="btn btn-outline-dark px-4 py-2">Lacak Status</a>
                     </div>
                 </div>
             </div>
@@ -154,8 +154,8 @@
         <h2 class="fw-bold mb-4">Siap untuk memulai permohonan?</h2>
         <p class="lead text-muted mb-4">Proses yang cepat dan mudah hanya beberapa klik di depan Anda. Dapatkan data yang Anda butuhkan sekarang juga.</p>
         <div class="d-flex justify-content-center gap-3">
-            <a href="#" class="btn btn-dark px-5 py-3">Ajukan Permohonan Sekarang</a>
-            <a href="#" class="btn btn-outline-dark px-5 py-3">Hubungi Kami</a>
+            <a href="{{ route('permohonan.form') }}" class="btn btn-dark px-5 py-3">Ajukan Permohonan Sekarang</a>
+            <a href="{{ route('contactus') }}" class="btn btn-outline-dark px-5 py-3">Hubungi Kami</a>
         </div>
     </div>
 </section>

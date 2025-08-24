@@ -8,8 +8,22 @@
         {{-- Kolom Kiri --}}
         <div class="col-lg-4 mb-5 mb-lg-0">
           
-            <h2 class="fw-bold">Frequently Asked Questions</h2>
-            <p class="text-muted fs-7">Masih butuh bantuan? <a href="{{ route('contactus') }}" class="text-primary fw-medium">Hubungi Kami</a></p>
+            <div class="custom-banner p-4 rounded-3">
+            <div class="d-flex flex-wrap justify-content-between align-items-center">
+                
+                <div class="mb-3 mb-md-0">
+                    <h4 class="fw-bold" style="color: #0d6efd;">Masih Butuh Bantuan?</h4>
+                    <p class="mb-0 text-secondary">Tim kami siap menjawab pertanyaan Anda.</p>
+                </div>
+                
+                <div>
+                    <a href="{{ route('contactus') }}" class="btn btn-primary fw-semibold px-3 py-2">
+                        <i class="bi bi-headset me-2"></i>Hubungi Kami
+                    </a>
+                </div>
+
+            </div>
+        </div>
         </div>
 
         {{-- Kolom Kanan (Accordion FAQ) --}}
@@ -81,15 +95,7 @@
 
 @push('styles')
 <style>
-    /*
-     * CSS KUSTOM UNTUK HALAMAN FAQ
-     * Sesuai permintaan:
-     * 1. Tombol ikon di kiri.
-     * 2. Tidak ada border/stroke pada item.
-     * 3. Tampilan lebih lega dan bersih.
-    */
 
-    /* Menggunakan accordion-flush untuk menghilangkan border default dan corner-radius */
     .accordion-flush .accordion-item {
         border-bottom: 1px solid #dee2e6; /* Garis pemisah antar item */
     }

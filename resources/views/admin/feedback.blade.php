@@ -53,6 +53,67 @@
         <span class="text-muted">Total: {{ $feedbacks->total() }} feedback</span>
     </div>
 
+    <div class="row">
+        <div class="col-xl-6 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Rata-rata Rating Keseluruhan</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ number_format($overallAverageRating ?? 0, 1) }} / 5.0
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-star fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if(request('rating'))
+        <div class="col-xl-6 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Rata-rata Sesuai Filter (Bintang {{ request('rating') }})</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ number_format($filteredAverageRating ?? 0, 1) }} / 5.0
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-filter fa-2x text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body d-flex justify-content-start align-items-center flex-wrap">
+            <span class="fw-semibold me-3 text-muted">Filter Rating:</span>
+            <div class="btn-group" role="group" aria-label="Filter Rating">
+                <a href="{{ route('admin.feedback.index', array_diff_key(request()->query(), ['rating' => ''])) }}" 
+                   class="btn btn-sm {{ !request('rating') ? 'btn-primary' : 'btn-outline-primary' }}">
+                    Semua
+                </a>
+                
+                @for ($i = 5; $i >= 1; $i--)
+                    <a href="{{ route('admin.feedback.index', array_merge(request()->query(), ['rating' => $i])) }}" 
+                       class="btn btn-sm {{ request('rating') == $i ? 'btn-primary' : 'btn-outline-primary' }}">
+                        {{ $i }} <i class="fas fa-star text-warning"></i>
+                    </a>
+                @endfor
+            </div>
+        </div>
+    </div>
+
     <div class="card shadow-sm border-0">
         <div class="card-body">
             <div class="table-responsive table-container">
@@ -84,7 +145,6 @@
                             <td class="fw-bold">{{ $feedbacks->firstItem() + $index }}</td>
                             <td>{{ $feedback->user->name ?? 'N/A' }}</td>
                             <td>
-                                {{-- Menampilkan rating dalam bentuk bintang --}}
                                 <span class="text-warning">
                                     @for ($i = 0; $i < $feedback->rating; $i++)<i class="fas fa-star"></i>@endfor
                                 </span>
@@ -94,17 +154,15 @@
                             </td>
                             <td>{{ Str::limit($feedback->pesan ?? '-', 40) }}</td>
                             <td>
-                                {{-- Menampilkan kolom baru: catatan_evaluasi --}}
                                 {{ Str::limit($feedback->catatan_evaluasi ?? '-', 40) }}
                             </td>
                             <td>{{ $feedback->created_at->format('d M Y') }}</td>
                             <td class="text-center">
                                 @if ($feedback->permohonan)
-                                <a href="{{ route('admin.permohonan.show', $feedback->permohonan->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3" title="Lihat Detail Permohonan #{{ $feedback->permohonan->id }}">
+                                <a href="{{ route('admin.permohonan.show', $feedback->permohonan->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3" title="Lihat Detail Permohonan #{{ $feedback->permohonan->nomor_permohonan ?? $feedback->permohonan->id }}">
                                     Proses
                                 </a>
                                 @else
-                                {{-- Tampil jika data permohonan tidak ditemukan/sudah dihapus --}}
                                 <span class="badge bg-secondary-subtle text-secondary-emphasis">Permohonan Dihapus</span>
                                 @endif
                             </td>

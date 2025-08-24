@@ -3,7 +3,7 @@
 @section('title', 'Statistik Pegawai Berdasarkan Jenis Kelamin')
 
 @section('content')
-<h2 class="mb-4 fw-bold">Data Pegawai Berdasarkan Jenis Kelamin</h2>
+<h2 class="mb-4">Data Unit Organisasi Berdasarkan Jenis Kelamin</h2>
 @if($periodeTerbaru)
 <p class="text-muted">Periode Data: {{ \Carbon\Carbon::parse($periodeTerbaru)->translatedFormat('F Y') }}</p>
 @else

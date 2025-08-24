@@ -11,13 +11,11 @@ class NotificationController extends Controller
     {
         $permohonan = PermohonanData::findOrFail($id);
 
-        // Update kolom admin_read_at dengan waktu saat ini
         if (is_null($permohonan->admin_read_at)) {
             $permohonan->admin_read_at = now();
             $permohonan->save();
         }
 
-        // Arahkan admin ke halaman detail permohonan yang relevan
         return redirect()->route('admin.permohonan.show', $permohonan->id);
     }
     public function markAllAsRead()

@@ -25,22 +25,16 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
         $request->session()->regenerate();
-
         if (Auth::user()->role === 'admin') {
             activity()->log('admin login');
             return redirect()->route('admin.index');
-            
         }
         else if (Auth::user()->role === 'kepala') {
             activity()->log('kepala bidang login');
             return redirect()->route('kepala.dashboard');
         }
-        
             activity()->log('User login');
-        
-    
         return redirect()->route('dashboardUser');
     }
 
@@ -55,6 +49,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('dashboard-user');
+        return redirect()->route('dashboardUser');
     }
 }

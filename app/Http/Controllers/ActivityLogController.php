@@ -14,9 +14,9 @@ class ActivityLogController extends Controller
 
         $logs = Activity::with('causer')
                         ->orderBy($sort, $direction)
-                        ->paginate(20); // Menampilkan 20 log per halaman
+                        ->paginate(20);
 
-        return view('admin.logs.index', [ // Sesuaikan nama view jika perlu
+        return view('admin.logs.index', [
             'logs' => $logs,
             'sort' => $sort,
             'direction' => $direction

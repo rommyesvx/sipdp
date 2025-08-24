@@ -3,7 +3,7 @@
 @section('title', 'Data Pegawai Berdasarkan Pendidikan')
 
 @section('content')
-<h2 class="mb-4">Data OPD Berdasarkan Pendidikan Terakhir</h2>
+<h2 class="mb-4">Data Unit Organisasi Berdasarkan Pendidikan Terakhir</h2>
 @if($periodeTerbaru)
     <p class="text-muted">Periode Data: {{ \Carbon\Carbon::parse($periodeTerbaru)->translatedFormat('F Y') }}</p>
 @else

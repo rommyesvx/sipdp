@@ -1,6 +1,6 @@
 @extends('layouts.newAppUser')
 
-@section('title', 'Detail Permohonan #' . $permohonan->id)
+@section('title', 'Detail Permohonan #' . $permohonan->nomor_permohonan)
 
 @push('styles')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -29,7 +29,7 @@
 
     .timeline-step {
         position: relative;
-        padding-left: 32px;
+        padding-left: 40px;
         /* Jarak untuk dot dan spasi */
         margin-bottom: 2rem;
     }
@@ -71,12 +71,9 @@
         background-color: var(--bs-danger);
     }
 
-    /* Kartu konten di setiap langkah timeline */
-    .timeline-content {
-        background-color: #fff;
-        border: 1px solid #e9ecef;
-        border-radius: 0.75rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, .05);
+    .status-badge.bg-eskalasi {
+        background-color: #e7e7ff !important;
+        color: #6759ff !important;
     }
 
     .star-rating i {
@@ -89,9 +86,39 @@
 @section('content')
 <div class="bg-body-secondary">
     <div class="container py-5">
-        <a href="{{ route('users.riwayat') }}" class="btn btn-light border shadow-sm mb-4">
-            <i class="fas fa-arrow-left me-2"></i> Kembali ke Riwayat
-        </a>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a href="{{ route('users.riwayat') }}" class="btn btn-light border shadow-sm">
+                <i class="fas fa-arrow-left me-2"></i> Kembali ke Riwayat
+            </a>
+            <a href="{{ route('chat.index', $permohonan->id) }}" class="btn btn-primary">
+    Buka Live Chat
+</a>
+
+
+            @if($permohonan->status == 'ditolak')
+            <a href="{{ route('permohonan.form') }}" class="btn btn-primary fw-semibold">
+                <i class="fas fa-plus me-2"></i> Buat Permohonan Baru
+            </a>
+            @endif
+        </div>
+
+        @if($permohonan->status === 'ditolak' && $permohonan->alasan_penolakan)
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-10">
+                <div class="card rounded-4 border-danger border-2 shadow-sm">
+                    <div class="card-body p-4 text-center">
+                        <h4 class="text-danger fw-bold"><i class="fas fa-exclamation-triangle me-2"></i>Permohonan Anda Ditolak</h4>
+                        <p class="fs-5 mt-2 mb-3">"{{ $permohonan->alasan_penolakan }}"</p>
+                        <hr class="w-50 mx-auto">
+                        <p class="mb-2 small">Jika ada pertanyaan lebih lanjut, jangan ragu untuk menghubungi kami.</p>
+                        <a href="{{ route('contactus') }}" class="btn btn-dark btn-sm">
+                            <i class="fas fa-headset me-2"></i> Hubungi Kami
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
 
         <div class="card shadow-sm rounded-4 border-0 mb-4">
             <div class="card-header p-4 d-flex flex-wrap justify-content-between align-items-center gap-3 border-bottom-0 request-header-gradient">
@@ -105,7 +132,7 @@
                 if ($permohonan->status == 'selesai') { $statusConfig = ['class' => 'bg-success-subtle text-success-emphasis', 'icon' => 'fa-check-circle', 'text' => 'Disetujui']; }
                 elseif ($permohonan->status == 'ditolak') { $statusConfig = ['class' => 'bg-danger-subtle text-danger-emphasis', 'icon' => 'fa-times-circle', 'text' => 'Ditolak']; }
                 elseif ($permohonan->status == 'diproses') { $statusConfig = ['class' => 'bg-warning-subtle text-warning-emphasis', 'icon' => 'fa-sync-alt fa-spin', 'text' => 'Diproses']; }
-                elseif ($permohonan->status == 'eskalasi') { $statusConfig = ['class' => 'badge rounded-pill fw-medium status-badge d-inline-flex align-items-center bg-eskalasi', 'icon' => 'fas fa-arrow-up', 'text' => 'Eskalasi']; }
+                elseif ($permohonan->status == 'eskalasi') { $statusConfig = ['class' => 'status-badge bg-eskalasi', 'icon' => 'fas fa-arrow-up', 'text' => 'Eskalasi']; }
                 @endphp
                 <div class="badge rounded-pill fs-6 fw-semibold d-inline-flex align-items-center gap-2 px-3 py-2 {{ $statusConfig['class'] }}">
                     <i class="fas {{ $statusConfig['icon'] }}"></i>
@@ -128,23 +155,18 @@
                             <div>
                                 @php
                                 $kolomList = json_decode($permohonan->kolom_diminta, true);
-
-                                // "Kamus" untuk menerjemahkan nama kolom menjadi label yang ramah
                                 $columnLabels = [
                                 'nama' => 'Nama Lengkap', 'nipBaru' => 'NIP Baru', 'nik' => 'NIK',
                                 'agama' => 'Agama', 'jenisKelamin' => 'Jenis Kelamin', 'alamat' => 'Alamat',
-                                'statusPegawai' => 'Status Pegawai', 'masaKerjaTahun' => 'Masa Kerja (Tahun)',
-                                'masaKerjaBulan' => 'Masa Kerja (Bulan)', 'jabatanNama' => 'Nama Jabatan',
-                                'satuanKerjaKerjaNama' => 'Departemen', 'golRuangAkhir' => 'Golongan',
-                                'pendidikanTerakhirNama' => 'Pendidikan Terakhir',
+                                'statusPegawai' => 'Status Pegawai', 'masaKerja' => 'Masa Kerja',
+                                'jabatanNama' => 'Nama Jabatan', 'satuanKerjaKerjaNama' => 'Departemen',
+                                'golRuangAkhir' => 'Golongan', 'pendidikanTerakhirNama' => 'Pendidikan Terakhir',
                                 ];
                                 @endphp
-
                                 @if(is_array($kolomList) && !empty($kolomList))
                                 <div class="d-flex flex-wrap gap-1">
                                     @foreach($kolomList as $kolom)
                                     <span class="badge text-dark-emphasis bg-light-subtle border fw-medium">
-                                        {{-- Tampilkan label dari kamus, atau nama kolom asli jika tidak ada --}}
                                         {{ $columnLabels[$kolom] ?? ucfirst(str_replace('_', ' ', $kolom)) }}
                                     </span>
                                     @endforeach
@@ -164,15 +186,15 @@
                         <div class="mb-4"><label class="form-label text-muted small text-uppercase fw-medium">Tanggal Diajukan</label>
                             <p class="fs-5 mb-0">{{ $permohonan->created_at->format('d M Y, H:i') }} WIB</p>
                         </div>
-                        @if ($permohonan->file_permohonan)
+                        @if ($permohonan->suratPengantar)
                         <div class="mb-4">
                             <label class="form-label text-muted small text-uppercase fw-medium">Surat Pengantar</label>
-                            <a href="{{ route('permohonan.downloadHasil', ['id' => $permohonan->id]) }}" target="_blank" class="text-decoration-none">
+                            <a href="{{ route('permohonan.downloadPengantar', ['id' => $permohonan->id]) }}" target="_blank" class="text-decoration-none">
                                 <div class="border border-2 border-dashed rounded-3 p-3 d-flex align-items-center gap-3">
                                     <div class="fs-2 text-danger"><i class="fas fa-file-pdf"></i></div>
                                     <div>
-                                        <p class="fw-semibold mb-0">Surat Pengantar.pdf</p>
-                                        <small class="text-primary fw-medium">Lihat File di Tab Baru</small>
+                                        <p class="fw-semibold mb-0 text-break">{{ basename($permohonan->suratPengantar->nama_asli_file) }}</p>
+                                        <small class="text-primary">Lihat File</small>
                                     </div>
                                 </div>
                             </a>
@@ -182,6 +204,33 @@
                 </div>
             </div>
         </div>
+
+        @if ($permohonan->status == 'selesai' && $permohonan->fileHasil)
+        <div class="card rounded-4 border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+                <h4 class="fw-bold">Unduh Data</h4>
+                <p class="text-muted">Data yang Anda mohonkan telah tersedia. Silakan unduh file berikut.</p>
+                <div class="border border-2 border-dashed rounded-3 p-3 d-flex align-items-center gap-3 mb-3">
+                    <div class="fs-2 text-success"><i class="fas fa-file-excel"></i></div>
+                    <div class="flex-grow-1">
+                        <p class="fw-semibold mb-0">{{ basename($permohonan->fileHasil->nama_asli_file) }}</p><small class="text-muted">Disetujui pada: {{ $permohonan->updated_at->format('d M Y') }}</small>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('permohonan.downloadHasil', ['id' => $permohonan->id]) }}" class="btn btn-primary fw-semibold">
+                        <i class="fas fa-download me-2"></i>Unduh Hasil Data
+                    </a>
+                    @if (!$permohonan->feedback)
+                    <a href="#feedbackCard" class="btn btn-outline-warning fw-semibold">
+                        <i class="fas fa-star me-2"></i>Berikan Feedback
+                    </a>
+                    @endif
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- KARTU TIMELINE --}}
         <div class="card shadow-sm border-0 rounded-4 mb-4">
             <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -191,13 +240,12 @@
                     </button>
                 </div>
 
-                {{-- Menampilkan notifikasi status terakhir --}}
                 @if ($permohonan->status == 'selesai')
                 <div class="alert alert-success border-0 border-start border-5 border-success">
                     <div class="d-flex align-items-center"><i class="fas fa-check-circle fs-4 me-3"></i>
                         <div>
                             <p class="fw-bold mb-0">Permohonan Anda telah disetujui</p>
-                            <p class="mb-0 small">Data telah dikirim dan dapat diunduh pada bagian di bawah.</p>
+                            <p class="mb-0 small">Data telah dikirim dan dapat diunduh pada bagian di atas.</p>
                         </div>
                     </div>
                 </div>
@@ -206,7 +254,7 @@
                     <div class="d-flex align-items-center"><i class="fas fa-times-circle fs-4 me-3"></i>
                         <div>
                             <p class="fw-bold mb-0">Permohonan Anda ditolak</p>
-                            <p class="mb-0 small">Silakan lihat alasan penolakan pada bagian di bawah.</p>
+                            <p class="mb-0 small">Alasan penolakan dapat dilihat pada kartu informasi di atas.</p>
                         </div>
                     </div>
                 </div>
@@ -238,7 +286,6 @@
                         ];
                         @endphp
 
-                        {{-- Looping melalui setiap langkah yang mungkin --}}
                         @foreach(['menunggu', 'diproses', 'eskalasi'] as $step)
                         @php
                         $step_index = array_search($step, $all_steps);
@@ -262,7 +309,6 @@
                         @endif
                         @endforeach
 
-                        {{-- Langkah Terakhir: Disetujui atau Ditolak --}}
                         @if(in_array($permohonan->status, ['selesai', 'ditolak']))
                         <div class="timeline-step {{ $permohonan->status == 'selesai' ? 'active' : 'rejected' }}">
                             <div class="timeline-dot"></div>
@@ -278,44 +324,7 @@
                 </div>
             </div>
         </div>
-
-        {{-- KARTU HASIL DATA & FEEDBACK (JIKA SELESAI) --}}
-        @if ($permohonan->status == 'selesai' && $permohonan->file_hasil)
-        <div class="card rounded-4 border-0 shadow-sm mb-4">
-            <div class="card-body p-4">
-                <h4 class="fw-bold">Unduh Data</h4>
-                <p class="text-muted">Data yang Anda mohonkan telah tersedia. Silakan unduh file berikut.</p>
-                <div class="border border-2 border-dashed rounded-3 p-3 d-flex align-items-center gap-3 mb-3">
-                    <div class="fs-2 text-success"><i class="fas fa-file-excel"></i></div>
-                    <div class="flex-grow-1">
-                        <p class="fw-semibold mb-0">{{ basename($permohonan->file_hasil) }}</p><small class="text-muted">Disetujui pada: {{ $permohonan->updated_at->format('d M Y') }}</small>
-                    </div>
-                </div>
-                {{-- Tombol Unduh dan Beri Feedback --}}
-                <div class="d-flex gap-2">
-                    <a href="{{ route('permohonan.downloadHasil', ['id' => $permohonan->id]) }}" class="btn btn-primary fw-semibold">
-                        <i class="fas fa-download me-2"></i>Unduh Hasil Data
-                    </a>
-                    @if (!$permohonan->feedback)
-                    <a href="#feedbackCard" class="btn btn-outline-warning fw-semibold">
-                        <i class="fas fa-star me-2"></i>Berikan Feedback
-                    </a>
-                    @endif
-                </div>
-            </div>
-        </div>
-        @endif
-
-        {{-- KARTU ALASAN PENOLAKAN (JIKA DITOLAK) --}}
-        @if($permohonan->status === 'ditolak' && $permohonan->alasan_penolakan)
-        <div class="card rounded-4 border-danger border-2 shadow-sm">
-            <div class="card-body p-4">
-                <h4 class="text-danger fw-bold"><i class="fas fa-exclamation-triangle me-2"></i>Alasan Penolakan</h4>
-                <p class="fs-5 mt-3">{{ $permohonan->alasan_penolakan }}</p>
-            </div>
-        </div>
-        @endif
-
+        
         @if ($permohonan->status == 'selesai')
         <div class="card rounded-4 border-0 shadow-sm">
             <div class="card-body p-4">
@@ -344,7 +353,6 @@
 @endsection
 
 @push('scripts')
-{{-- Script untuk rating bintang --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const starWrapper = document.querySelector('.star-rating');

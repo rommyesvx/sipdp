@@ -13,6 +13,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -122,30 +123,30 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('admin/permohonan*') ? 'active' : '' }}" href="{{ route('admin.permohonan.index') }}">
-                        <i class="nav-icon fas fa-file-import"></i> Permohonan
+                        <i class="nav-icon fas fa-file-import"></i> List Permohonan
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->is('admin/statistik*') ? 'active' : '' }}" href="{{ route('admin.statistik') }}">
-                        <i class="nav-icon fas fa-chart-bar"></i> Statistik
+                    <a class="nav-link {{ request()->is('admin/statistik') ? 'active' : '' }}" href="{{ route('admin.statistik') }}">
+                        <i class="nav-icon fas fa-chart-bar"></i> Statistik Permohonan
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#laporanSubmenu" role="button" aria-expanded="false" aria-controls="laporanSubmenu">
                         <i class="nav-icon fas fa-print"></i>
-                        Data OPD Berdasarkan Statistik
+                        Data Unit Organisasi Berdasarkan Statistik
                         <i class="fas fa-chevron-down ms-auto"></i>
                     </a>
                     <div class="collapse" id="laporanSubmenu">
                         <ul class="nav flex-column ps-4">
                             <li class="nav-item">
-                                <a href="{{ route('admin.agama') }}" class="nav-link">Agama</a>
+                                <a href="{{ route('admin.agama') }}" class="nav-link {{ request()->is('admin/agama*') ? 'active' : '' }}">Agama</a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.jeniskelamin') }}" class="nav-link">Jenis Kelamin</a>
+                                <a href="{{ route('admin.jeniskelamin') }}" class="nav-link {{ request()->is('admin/jeniskelamin*') ? 'active' : '' }}">Jenis Kelamin</a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.tingkatpendidikan') }}" class="nav-link">Tingkat Pendidikan</a>
+                                <a href="{{ route('admin.tingkatpendidikan') }}" class="nav-link {{ request()->is('admin/tingkat-pendidikan*') ? 'active' : '' }}">Tingkat Pendidikan</a>
                             </li>
                         </ul>
                     </div>
@@ -157,13 +158,14 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->is('admin/log*') ? 'active' : '' }}" href="{{ route('admin.log') }}">
-                        <i class="nav-icon fas fa-clock-rotate-left"></i> Log Aktivitas
+                    <a class="nav-link {{ request()->is('admin/livechat*') ? 'active' : '' }}" href="{{ route('admin.chat.index') }}">
+                        <i class="nav-icon fas fa-comments"></i> <span>Chat</span>
+                        <span id="chat-badge" class="badge bg-danger ms-auto d-none">0</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->is('admin/datapegawai*') ? 'active' : '' }}" href="{{ route('admin.dataPegawai.index') }}">
-                        <i class="nav-icon fas fa-database"></i> Data Pegawai
+                    <a class="nav-link {{ request()->is('admin/log*') ? 'active' : '' }}" href="{{ route('admin.log') }}">
+                        <i class="nav-icon fas fa-clock-rotate-left"></i> Log Aktivitas
                     </a>
                 </li>
             </ul>
@@ -235,10 +237,6 @@
                                 {{ Auth::user()->name ?? 'Admin' }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2">
-                                <li><a class="dropdown-item" href="#">Profil</a></li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
@@ -262,9 +260,9 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script> 
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -276,3 +274,28 @@
 </body>
 
 </html>
+<script>
+    $(document).ready(function() {
+        function fetchUnreadChat() {
+            fetch("{{ route('admin.chat.unreadCount') }}")
+                .then(res => res.json())
+                .then(data => {
+                    let badge = document.getElementById('chat-badge');
+                    if (badge) { // Pastikan elemen ada
+                        const unreadCount = parseInt(data.unread, 10);
+                        if (unreadCount > 0) {
+                            badge.innerText = unreadCount;
+                            badge.classList.remove('d-none');
+                        } else {
+                            badge.classList.add('d-none');
+                        }
+                    }
+                })
+                .catch(error => console.error('Error fetching chat count:', error));
+        }
+
+        setInterval(fetchUnreadChat, 5000);
+        fetchUnreadChat();
+
+    });
+</script>

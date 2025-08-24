@@ -16,12 +16,6 @@
             {{-- Baris untuk Input Filter --}}
             <div class="row g-3">
                 <div class="col-md-6 col-lg-3">
-                    <label for="jenis_laporan" class="form-label">Jenis Laporan</label>
-                    <select name="jenis_laporan" id="jenis_laporan" class="form-select" disabled>
-                        <option>Laporan Permohonan</option>
-                    </select>
-                </div>
-                <div class="col-md-6 col-lg-3">
                     <label for="tanggal_mulai" class="form-label">Tanggal Mulai</label>
                     <input type="date" name="tanggal_mulai" id="tanggal_mulai" class="form-control" value="{{ request('tanggal_mulai') }}">
                 </div>
@@ -39,20 +33,21 @@
                         <option value="diproses" @selected(request('status')=='diproses' )>Diproses</option>
                     </select>
                 </div>
-            </div>
-
-            <hr class="my-4">
-
-            {{-- Baris untuk Tombol Aksi --}}
-            <div class="d-flex justify-content-end gap-2">
-                <a href="{{ route('kepala.laporan.index') }}" class="btn btn-light border fw-semibold">
-                    <i class="fas fa-sync-alt me-1"></i> Reset
-                </a>
-                <button type="submit" class="btn btn-primary fw-semibold">
-                    <i class="fas fa-eye me-2"></i> Tampilkan Pratinjau
-                </button>
-            </div>
-        </form>
+            <div class="col-md-3">
+            <label for="kriteria" class="form-label">Jenis Data Diminta</label>
+            <select name="kriteria" id="kriteria" class="form-select">
+                <option value="semua">Semua Jenis</option>
+                @foreach($kriteriaOptions as $kriteria)
+                    <option value="{{ $kriteria }}" @selected(request('kriteria') == $kriteria)>{{ $kriteria }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end gap-2 mt-3">
+        <a href="{{ route('kepala.laporan.index') }}" class="btn btn-light border fw-semibold"><i class="fas fa-sync-alt me-1"></i> Reset</a>
+        <button type="submit" class="btn btn-primary fw-semibold"><i class="fas fa-eye me-2"></i> Tampilkan Pratinjau</button>
+    </div>
+</form>
     </div>
 </div>
 

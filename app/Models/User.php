@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Notifications\VerifyEmailNotification;
 
-class User extends Authenticatable
+
+class User extends Authenticatable implements MustVerifyEmail
 {
-    
+
     use HasFactory, Notifiable;
 
     /**
@@ -56,5 +59,31 @@ class User extends Authenticatable
     {
         return $this->hasMany(PermohonanData::class);
     }
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new VerifyEmailNotification);
+    }
+    public function chatRooms(): BelongsToMany
+    {
+        return $this->belongsToMany(ChatRoom::class, 'chat_participants')
+            ->withPivot(['role', 'last_read_at', 'muted'])
+            ->withTimestamps();
+    }
+    public function chatParticipations(): HasMany
+    {
+        return $this->hasMany(ChatParticipant::class, 'user_id');
+    }
 
+    public function chatMessages(): HasMany
+    {
+        return $this->hasMany(ChatMessage::class, 'sender_id');
+    }
+
+    /**
+     * Helper: ambil semua room terkait permohonan tertentu yang diikuti user ini.
+     */
+    public function roomsByPermohonan(int $permohonanId)
+    {
+        return $this->chatRooms()->where('permohonan_data_id', $permohonanId);
+    }
 }

@@ -25,21 +25,12 @@ class RequestDataController extends Controller
         'tujuan' => 'required|string|max:255',
         'tipe' => 'required|string|in:pdf,excel,csv',
         'asal' => 'required|string',
-        
-        // 'jenis_data_kustom' wajib diisi HANYA JIKA checkbox 'is_kustom' dicentang ('on').
         'jenis_data_kustom' => 'required_if:is_kustom,on|nullable|string|max:2000',
-        
-        // 'jenis_data_kriteria' wajib diisi HANYA JIKA checkbox 'is_kustom' TIDAK dicentang.
-        // 'not_in:[]' memastikan isinya bukan array JSON kosong.
         'jenis_data_kriteria' => 'required_if:is_kustom,null|nullable|json|not_in:[]',
-        
-        // Kolom yang diminta juga wajib diisi minimal satu.
         'kolom' => 'required|array|min:1',
-        
         'file_permohonan' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
         'catatan' => 'nullable|string',
     ], [
-        // Pesan error kustom agar lebih ramah bagi pengguna
         'jenis_data_kustom.required_if' => 'Harap jelaskan data yang Anda butuhkan di dalam kotak teks.',
         'jenis_data_kriteria.required_if' => 'Anda harus menambahkan setidaknya satu kriteria data menggunakan tombol "Tambah".',
         'jenis_data_kriteria.not_in' => 'Anda harus menambahkan setidaknya satu kriteria data.',
@@ -50,22 +41,32 @@ class RequestDataController extends Controller
         if ($request->hasFile('file_permohonan')) {
             $path = $request->file('file_permohonan')->store('permohonan_files', 'public');
         }
-
          $jenisData = $request->has('is_kustom') 
                     ? $request->input('jenis_data_kustom') 
                     : $request->input('jenis_data_kriteria');
 
-        PermohonanData::create([
+        $permohonan = PermohonanData::create([
             'user_id' => Auth::id(),
             'tujuan' => $request->input('tujuan') === 'Lainnya' ? $request->input('tujuan_lainnya_text', 'Lainnya') : $request->input('tujuan'),
             'tipe' => $request->input('tipe'),
             'asal' => $request->input('asal'),
             'jenis_data' => $jenisData,
             'kolom_diminta' => json_encode($request->input('kolom')),
-            'file_permohonan' => $path,
             'catatan' => $request->input('catatan'),
+            // 'file_permohonan' akan di-handle terpisah
         ]);
 
+        if ($request->hasFile('file_permohonan')) {
+            $file = $request->file('file_permohonan');
+            $path = $file->store('surat_pengantar', 'public'); // Simpan file
+
+            // 3. Buat record baru di tabel file_permohonan yang terhubung dengan permohonan di atas
+            $permohonan->files()->create([
+                'tipe_file' => 'pengantar',
+                'path' => $path,
+                'nama_asli_file' => $file->getClientOriginalName(),
+            ]);
+        }
         return redirect()->route('users.riwayat')->with('success', 'Permohonan berhasil dikirim!');
     }
 

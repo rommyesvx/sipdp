@@ -11,7 +11,7 @@ class FeedbackController extends Controller
 {
     $request->validate([
         'permohonan_id' => 'required|exists:data_permohonan,id',
-        'pesan' => 'required|string|max:1000',
+        'pesan' => 'nullable|string|max:1000',
         'rating' => 'required|integer|min:1|max:5',
     ]);
 
@@ -32,12 +32,9 @@ class FeedbackController extends Controller
 
         $feedback = Feedback::findOrFail($id);
 
-        // Update kolom catatan_evaluasi dan simpan
         $feedback->catatan_evaluasi = $request->catatan_evaluasi;
         $feedback->save();
 
-
-        // Kembali ke halaman sebelumnya dengan pesan sukses
         return redirect()->back()->with('success', 'Catatan evaluasi berhasil disimpan!');
     }
 

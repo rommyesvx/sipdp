@@ -14,4 +14,8 @@ class UserController extends Controller
     {
         return view('users/faq');
     }
+    public function showKontakKami()
+    {
+        return view('users/contactus');
+    }
 }

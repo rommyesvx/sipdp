@@ -136,7 +136,7 @@
             </div>
 
             <div class="col-lg-6 d-none d-lg-flex image-column">
-                <img src="https://cdni.iconscout.com/illustration/premium/thumb/sign-up-4922762-4097237.png" alt="Register Illustration">
+                <img src="https://cdni.iconscout.com/illustration/premium/thumb/login-3305943-2757111.png" alt="Register Illustration">
             </div>
 
         </div>
@@ -145,7 +145,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Fungsi umum untuk toggle password
             function setupPasswordToggle(toggleId, passwordId) {
                 const toggleElement = document.getElementById(toggleId);
                 const passwordElement = document.getElementById(passwordId);

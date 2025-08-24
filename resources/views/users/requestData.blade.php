@@ -59,14 +59,19 @@
                       <div class="form-check"><input class="form-check-input" type="radio" name="tujuan" id="tujuan_lainnya" value="Lainnya" {{ old('tujuan') == 'Lainnya' ? 'checked' : '' }}><label class="form-check-label" for="tujuan_lainnya">Lainnya</label></div>
                     </div>
                   </div>
-                  <div id="tujuanLainnyaContainer" class="mt-2 d-none"><input type="text" class="form-control rounded-3" name="tujuan_lainnya_text" placeholder="Sebutkan tujuan lainnya di sini" value="{{ old('tujuan_lainnya_text') }}"></div>
+                  <div id="tujuanLainnyaContainer" class="mt-3 {{ old('tujuan') == 'Lainnya' ? '' : 'd-none' }}">
+                    <label for="tujuan_lainnya_text" class="form-label">Sebutkan Tujuan Lainnya</label>
+                    <input type="text" class="form-control rounded-3" id="tujuan_lainnya_text" name="tujuan_lainnya_text" placeholder="Contoh: Untuk keperluan audit internal" value="{{ old('tujuan_lainnya_text') }}">
+                  </div>
+                  @error('tujuan_lainnya_text')
+                  <div class="text-danger mt-1">{{ $message }}</div>
+                  @enderror
                 </div>
 
                 <div class="col-12"><label class="form-label fw-semibold">Tipe File yang diperlukan</label>
                   <div class="d-flex gap-4">
                     <div class="form-check"><input class="form-check-input" type="radio" name="tipe" id="pdf" value="pdf" required {{ old('tipe') == 'pdf' ? 'checked' : '' }}><label class="form-check-label" for="pdf">PDF</label></div>
                     <div class="form-check"><input class="form-check-input" type="radio" name="tipe" id="excel" value="excel" {{ old('tipe') == 'excel' ? 'checked' : '' }}><label class="form-check-label" for="excel">Excel</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="tipe" id="csv" value="csv" {{ old('tipe') == 'csv' ? 'checked' : '' }}><label class="form-check-label" for="csv">CSV</label></div>
                   </div>
                 </div>
 
@@ -83,39 +88,38 @@
                 </div>
 
                 <div class="col-12">
-                <label class="form-label fw-semibold">Data yang dibutuhkan</label>
-                
-                {{-- Bagian Filter Builder --}}
-                <div id="filter-builder-section">
+                  <label class="form-label fw-semibold">Filter Kriteria Pegawai</label>
+
+                  <div id="filter-builder-section">
                     <div class="row g-2 mb-2">
-                        <div class="col-md-5"><label for="pilihKriteria" class="small text-muted d-block mb-1">Pilih Kriteria</label><select id="pilihKriteria" class="form-select"><option value="" selected>-- Pilih --</option>@foreach (array_keys($kriteria) as $item)<option value="{{ $item }}">{{ $item }}</option>@endforeach</select></div>
-                        <div class="col-md-5"><label for="pilihNilai" class="small text-muted d-block mb-1">Pilih Nilai</label><select id="pilihNilai" class="form-select" disabled><option value="">--</option></select></div>
-                        <div class="col-md-2 d-flex align-items-end"><button type="button" id="tambahKriteria" class="btn btn-primary w-100">Tambah</button></div>
+                      <div class="col-md-5"><label for="pilihKriteria" class="small text-muted d-block mb-1">Pilih Kriteria</label><select id="pilihKriteria" class="form-select">
+                          <option value="" selected>-- Pilih --</option>@foreach (array_keys($kriteria) as $item)<option value="{{ $item }}">{{ $item }}</option>@endforeach
+                        </select></div>
+                      <div class="col-md-5"><label for="pilihNilai" class="small text-muted d-block mb-1">Pilih Nilai</label><select id="pilihNilai" class="form-select" disabled>
+                          <option value="">--</option>
+                        </select></div>
+                      <div class="col-md-2 d-flex align-items-end"><button type="button" id="tambahKriteria" class="btn btn-primary w-100">Tambah</button></div>
                     </div>
                     <div id="kriteria-pills-container" class="border rounded-3 p-3 mt-2" style="min-height: 80px;"></div>
-                    {{-- Input tersembunyi dengan nama spesifik --}}
                     <input type="hidden" name="jenis_data_kriteria" id="kriteriaJsonInput" value="{{ old('jenis_data_kriteria', '[]') }}">
                     @error('jenis_data_kriteria')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
-                </div>
-                
-                {{-- Textbox untuk kriteria khusus --}}
-                <div id="kriteria-khusus-section" class="d-none">
-                    {{-- Textarea dengan nama spesifik --}}
+                  </div>
+
+                  <div id="kriteria-khusus-section" class="d-none">
                     <textarea class="form-control rounded-3 @error('jenis_data_kustom') is-invalid @enderror" id="kriteriaKustomTextarea" name="jenis_data_kustom" rows="4" placeholder="Jelaskan secara rinci data yang Anda butuhkan...">{{ old('jenis_data_kustom') }}</textarea>
                     @error('jenis_data_kustom')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                </div>
-                
-                {{-- Checkbox untuk beralih mode --}}
-                <div class="form-check mt-3">
+                  </div>
+
+                  <div class="form-check mt-3">
                     <input class="form-check-input" type="checkbox" id="kriteriaKhususCheckbox" name="is_kustom" {{ old('is_kustom') ? 'checked' : '' }}>
                     <label class="form-check-label" for="kriteriaKhususCheckbox">
-                        Saya ingin menuliskan sendiri kriteria data yang dibutuhkan
+                      Saya ingin menuliskan sendiri kriteria data yang dibutuhkan
                     </label>
+                  </div>
                 </div>
-            </div>
 
                 <div class="col-12">
-                  <label class="form-label fw-semibold">Pilih Kolom Data yang Ingin Ditampilkan</label>
+                  <label class="form-label fw-semibold">Tentukan Kolom Data</label>
                   <p class="text-muted small">Pilih data spesifik yang Anda butuhkan. Ini akan menjadi kolom pada file Excel/CSV yang Anda terima.</p>
 
                   <div class="accordion" id="kolomAccordion">
@@ -197,13 +201,64 @@
                   </div>
                 </div>
 
-                <div class="col-12"><label for="file_permohonan" class="form-label fw-semibold">Surat Pengantar (PDF/DOC, Max 2MB)</label><input type="file" class="form-control rounded-3 @error('file_permohonan') is-invalid @enderror" id="file_permohonan" name="file_permohonan">@error('file_permohonan')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                <div class="col-12"><label for="file_permohonan" class="form-label fw-semibold">Surat Pengantar (PDF)</label><input type="file" class="form-control rounded-3 @error('file_permohonan') is-invalid @enderror" id="file_permohonan" name="file_permohonan">@error('file_permohonan')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                 <div class="col-12"><label for="catatan" class="form-label fw-semibold">Catatan Tambahan</label><textarea class="form-control rounded-3" id="catatan" name="catatan" rows="3" placeholder="Tambahkan keterangan tambahan jika diperlukan.">{{ old('catatan') }}</textarea></div>
-
+                <div class="col-12 mt-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="1" id="setuju_syarat" name="setuju_syarat" required>
+                    <label class="form-check-label" for="setuju_syarat">
+                      Saya telah membaca dan menyetujui
+                      <a href="#" data-bs-toggle="modal" data-bs-target="#syaratKetentuanModal">
+                        Syarat dan Ketentuan
+                      </a>
+                      yang berlaku.
+                    </label>
+                  </div>
+                  @error('setuju_syarat')
+                  <div class="text-danger mt-1">{{ $message }}</div>
+                  @enderror
+                </div>
                 <div class="col-12 mt-4"><button type="submit" class="btn btn-primary w-100 rounded-pill py-3 fw-bold">Kirim Permohonan</button></div>
               </div>
             </form>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="syaratKetentuanModal" tabindex="-1" aria-labelledby="syaratKetentuanModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="syaratKetentuanModalLabel">Syarat dan Ketentuan Permohonan Data</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Dengan mencentang kotak persetujuan, Anda menyatakan bahwa Anda telah membaca, memahami, dan setuju untuk terikat oleh syarat dan ketentuan berikut:</p>
+
+          <h6>1. Tujuan Penggunaan Data</h6>
+          <p>Data yang Anda peroleh melalui layanan ini hanya akan digunakan untuk tujuan yang telah Anda sebutkan dalam formulir permohonan. Penggunaan data untuk tujuan lain di luar yang telah disetujui secara eksplisit dilarang.</p>
+
+          <h6>2. Kerahasiaan dan Keamanan</h6>
+          <p>Anda bertanggung jawab penuh untuk menjaga kerahasiaan dan keamanan data yang diterima. Anda tidak diizinkan untuk membagikan, mempublikasikan ulang, atau mendistribusikan data mentah kepada pihak ketiga tanpa izin tertulis dari kami.</p>
+
+          <h6>3. Integritas Data</h6>
+          <p>Anda dilarang mengubah, memanipulasi, atau menyajikan data secara keliru yang dapat merusak integritas informasi atau reputasi institusi kami.</p>
+
+          <h6>4. Atribusi</h6>
+          <p>Setiap publikasi, laporan, atau presentasi yang menggunakan data dari layanan ini wajib mencantumkan sumber data secara jelas dan benar sesuai dengan format yang telah ditentukan.</p>
+
+          <h6>5. Akurasi dan Tanggung Jawab</h6>
+          <p>Kami berusaha untuk menyediakan data yang akurat dan terkini. Namun, kami tidak bertanggung jawab atas kerugian atau kerusakan yang timbul dari penggunaan atau interpretasi data yang Anda lakukan.</p>
+
+          <h6>6. Pelanggaran</h6>
+          <p>Pelanggaran terhadap salah satu dari syarat dan ketentuan ini dapat mengakibatkan penangguhan atau pencabutan hak akses Anda ke layanan permohonan data di masa mendatang, serta tindakan hukum jika diperlukan.</p>
+
+          <hr>
+          <p class="fw-bold">Dengan melanjutkan, Anda mengonfirmasi bahwa informasi yang Anda berikan adalah benar dan Anda menerima semua ketentuan yang berlaku.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
         </div>
       </div>
     </div>
@@ -214,28 +269,26 @@
 @push('scripts')
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Ambil data kriteria dari PHP ke JavaScript
     const kriteriaData = @json($kriteria ?? []);
 
-    // Elemen-elemen untuk Filter Builder
     const kriteriaSelect = document.getElementById('pilihKriteria');
     const nilaiSelect = document.getElementById('pilihNilai');
     const tambahBtn = document.getElementById('tambahKriteria');
     const pillsContainer = document.getElementById('kriteria-pills-container');
 
-    // Elemen-elemen untuk beralih mode
     const kriteriaKhususCheckbox = document.getElementById('kriteriaKhususCheckbox');
     const filterBuilderSection = document.getElementById('filter-builder-section');
     const kriteriaKhususSection = document.getElementById('kriteria-khusus-section');
 
-    // Input yang akan dikirim ke backend (keduanya punya name="jenis_data")
     const kriteriaJsonInput = document.getElementById('kriteriaJsonInput');
     const kriteriaKustomTextarea = document.getElementById('kriteriaKustomTextarea');
 
-    // Variabel untuk menyimpan kriteria yang dipilih
+    const tujuanRadios = document.querySelectorAll('input[name="tujuan"]');
+    const lainnyaContainer = document.getElementById('tujuanLainnyaContainer');
+    const lainnyaInput = document.getElementById('tujuan_lainnya_text');
+
     let selectedCriteria = [];
     try {
-      // Coba parsing data lama jika ada (misal: setelah validation error)
       let oldData = JSON.parse(kriteriaJsonInput.value);
       if (Array.isArray(oldData)) {
         selectedCriteria = oldData;
@@ -244,9 +297,6 @@
       selectedCriteria = [];
     }
 
-    // --- FUNGSI-FUNGSI UTAMA ---
-
-    // Fungsi untuk menampilkan bubble/pill kriteria
     const renderPills = () => {
       pillsContainer.innerHTML = '';
       selectedCriteria.forEach(item => {
@@ -258,24 +308,20 @@
       kriteriaJsonInput.value = selectedCriteria.length > 0 ? JSON.stringify(selectedCriteria) : '';
     };
 
-    // Fungsi untuk beralih antara Filter Builder dan Textbox Kustom
     const toggleInputMode = () => {
       if (kriteriaKhususCheckbox.checked) {
         filterBuilderSection.classList.add('d-none');
         kriteriaKhususSection.classList.remove('d-none');
-        kriteriaJsonInput.disabled = true; // Nonaktifkan input JSON
-        kriteriaKustomTextarea.disabled = false; // Aktifkan textarea
+        kriteriaJsonInput.disabled = true; 
+        kriteriaKustomTextarea.disabled = false; 
       } else {
         filterBuilderSection.classList.remove('d-none');
         kriteriaKhususSection.classList.add('d-none');
-        kriteriaJsonInput.disabled = false; // Aktifkan input JSON
-        kriteriaKustomTextarea.disabled = true; // Nonaktifkan textarea
+        kriteriaJsonInput.disabled = false; 
+        kriteriaKustomTextarea.disabled = true; 
       }
     };
 
-    // --- EVENT LISTENERS ---
-
-    // Saat dropdown Kriteria berubah
     kriteriaSelect.addEventListener('change', function() {
       const selectedKey = this.value;
       const nilaiOptions = kriteriaData[selectedKey] || [];
@@ -291,12 +337,10 @@
       }
     });
 
-    // Saat tombol "Tambah" diklik
     tambahBtn.addEventListener('click', function() {
       const kriteria = kriteriaSelect.value;
       const nilai = nilaiSelect.value;
 
-      // Pengecekan yang lebih andal
       if (kriteria && nilai) {
         const isExist = selectedCriteria.some(item => item.kriteria === kriteria && item.nilai === nilai);
         if (!isExist) {
@@ -313,7 +357,6 @@
       }
     });
 
-    // Saat tombol 'x' pada bubble diklik
     pillsContainer.addEventListener('click', function(e) {
       if (e.target && e.target.classList.contains('remove-btn')) {
         const kriteria = e.target.dataset.kriteria;
@@ -323,12 +366,24 @@
       }
     });
 
-    // Saat checkbox kriteria khusus diubah
+    function toggleLainnyaInput() {
+      if (document.getElementById('tujuan_lainnya').checked) {
+        lainnyaContainer.classList.remove('d-none');
+      } else {
+        lainnyaContainer.classList.add('d-none');
+        lainnyaInput.value = ''; 
+      }
+    }
+    tujuanRadios.forEach(radio => {
+      radio.addEventListener('change', toggleLainnyaInput);
+    });
+
+
     kriteriaKhususCheckbox.addEventListener('change', toggleInputMode);
 
-    // --- INISIALISASI ---
-    renderPills(); // Render bubble/pill yang mungkin ada dari data lama
-    toggleInputMode(); // Atur tampilan awal berdasarkan status checkbox
+    renderPills();
+    toggleInputMode();
+    toggleLainnyaInput();
   });
 </script>
 @endpush

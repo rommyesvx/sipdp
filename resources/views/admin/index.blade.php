@@ -20,7 +20,7 @@
     <div class="row">
         {{-- Total Permohonan --}}
         <div class="col-lg col-md-6 col-12 mb-4">
-            <div class="card stat-card shadow-sm border-2 border-primary h-100">
+            <div class="card stat-card shadow-sm h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
@@ -29,12 +29,12 @@
                         </div>
                         <div class="fs-2 text-primary opacity-50"><i class="fas fa-file-alt"></i></div>
                     </div>
-                    <small class="text-muted mt-2 d-block"><i class="fas fa-arrow-up text-success"></i> 5 dari bulan lalu</small>
                 </div>
             </div>
         </div>
         {{-- Dalam Proses --}}
         <div class="col-lg col-md-6 col-12 mb-4">
+        <a href="{{ route('admin.permohonan.index', ['status' => 'diajukan']) }}" class="text-decoration-none">
             <div class="card stat-card shadow-sm border-0 h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -46,9 +46,11 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
+    </div>
         {{-- Disetujui --}}
         <div class="col-lg col-md-6 col-12 mb-4">
+        <a href="{{ route('admin.permohonan.index', ['status' => 'selesai']) }}" class="text-decoration-none">
             <div class="card stat-card shadow-sm border-0 h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -60,9 +62,11 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
+    </div>
         {{-- Ditolak --}}
         <div class="col-lg col-md-6 col-12 mb-4">
+        <a href="{{ route('admin.permohonan.index', ['status' => 'ditolak']) }}" class="text-decoration-none">
             <div class="card stat-card shadow-sm border-0 h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -74,9 +78,11 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
+    </div>
         {{-- Eskalasi --}}
         <div class="col-lg col-md-6 col-12 mb-4">
+        <a href="{{ route('admin.permohonan.index', ['status' => 'eskalasi']) }}" class="text-decoration-none">
             <div class="card stat-card shadow-sm border-0 h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -142,7 +148,6 @@
     <div class="card shadow-sm border-0">
         <div class="card-body p-4 text-center">
             
-            {{-- Menambahkan kelas .rounded-pill untuk membuat sudutnya bulat --}}
             <div class="progress rounded-pill mx-auto" style="height: 24px; max-width: 600px;">
                 <div class="progress-bar fw-bold" 
                      role="progressbar" 
@@ -155,7 +160,7 @@
             </div>
 
             <p class="text-center text-muted mt-3 mb-0">
-                {{ $selesaiBulanIni ?? 0 }} dari {{ $totalBulanIni ?? 0 }} permohonan telah diselesaikan.
+                {{ $selesaiBulanIni ?? 0 }} dari {{ $totalBulanIni ?? 0 }} permohonan pada bulan ini telah diselesaikan.
             </p>
 
         </div>
@@ -164,5 +169,4 @@
 @endsection
 
 @push('scripts')
-{{-- Jika Anda memerlukan script tambahan untuk dashboard, letakkan di sini --}}
 @endpush

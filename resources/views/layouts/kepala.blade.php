@@ -12,6 +12,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -76,12 +78,13 @@
     @php
     $unreadNotifications = \App\Models\PermohonanData::with('user')
     ->where('status', 'eskalasi')
-    ->whereNull('admin_read_at') // Anda bisa membuat kolom baru 'kepala_read_at' jika perlu pemisahan
+    ->whereNull('admin_read_at')
     ->orderBy('updated_at', 'desc')
     ->take(5)
     ->get();
-
     $unreadCount = $unreadNotifications->count();
+
+    $eskalasiCount = \App\Models\PermohonanData::where('status', 'eskalasi')->count();
     @endphp
 
     <div class="main-wrapper">
@@ -94,8 +97,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->is('kepala/permohonan*') ? 'active' : '' }}" href="{{ route('kepala.permohonan.index') }}">
-                        <i class="nav-icon fas fa-file-import"></i> Permohonan Eskalasi
+                    <a class="nav-link {{ request()->is('kepala/permohonan') ? 'active' : '' }}" href="{{ route('kepala.permohonan.index') }}">
+                        <i class="nav-icon fas fa-file-import"></i>
+                        <span>Permohonan Eskalasi</span>
+                        @if($eskalasiCount > 0)
+                        <span class="badge bg-danger rounded-pill ms-auto">{{ $eskalasiCount }}</span>
+                        @endif
                     </a>
                 </li>
                 <li class="nav-item">
@@ -106,6 +113,22 @@
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('kepala/feedback*') ? 'active' : '' }}" href="{{ route('kepala.feedback.index') }}">
                         <i class="nav-icon fas fa-comment-dots"></i> Feedback
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('kepala/statistik') ? 'active' : '' }}" href="{{ route('kepala.statistik') }}">
+                        <i class="nav-icon fas fa-chart-bar"></i> Statistik
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('kepala/statistik-pegawai') ? 'active' : '' }}" href="{{ route('kepala.statistik-pegawai.index') }}">
+                        <i class="nav-icon fas fa-chart-bar"></i> Statistik Pegawai
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('kepala/permohonan/semua') ? 'active' : '' }}" href="{{ route('kepala.permohonan.semua') }}">
+                        <i class="nav-icon fas fa-search"></i>
+                        <span>Monitoring Permohonan</span>
                     </a>
                 </li>
             </ul>
@@ -134,34 +157,40 @@
                                 <li class="p-2 border-bottom">
                                     <h6 class="fw-bold mb-0">Notifikasi Baru</h6>
                                     @if($unreadCount > 0)
-                                <form action="{{ route('notifikasi.bacaSemua') }}" method="POST" class="d-inline">
-                                    @csrf
-                                    <button type="submit" class="btn btn-link text-decoration-none p-0" style="font-size: 0.8em;">
-                                        Tandai semua dibaca
-                                    </button>
-                                </form>
-                                @endif
+                                    <form action="{{ route('admin.notifikasi.bacaSemua') }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-link text-decoration-none p-0" style="font-size: 0.8em;">
+                                            Tandai semua dibaca
+                                        </button>
+                                    </form>
+                                    @endif
                                 </li>
                                 @forelse ($unreadNotifications as $notif)
                                 <li>
-                                    <a class="dropdown-item py-2 d-flex" href="{{ route('notifikasi.baca', $notif->id) }}">
+                                    <a class="dropdown-item py-2 d-flex" href="{{ route('admin.notifikasi.baca', $notif->id) }}">
                                         <div class="me-3">
-                                            @if ($notif->status == 'eskalasi')
                                             <i class="fas fa-level-up-alt text-primary fs-4"></i>
-                                            @else
-                                            <i class="fas fa-file-import text-secondary fs-4"></i>
-                                            @endif
                                         </div>
                                         <div class="w-100">
                                             <p class="fw-bold mb-0 text-wrap">{{ $notif->user->name ?? 'User' }}</p>
-                                            <p class="small mb-0 text-wrap">Mengajukan permohonan baru dengan status: <strong>{{ ucfirst($notif->status) }}</strong></p>
-                                            <small class="text-muted">{{ $notif->created_at->diffForHumans() }}</small>
+                                            <p class="small mb-1 text-wrap">
+                                                Permohonan dieskalasi oleh staf.
+                                            </p>
+                                            @if($notif->alasan_eskalasi)
+                                            <div class="p-2 rounded" style="background-color: #f0f2f5;">
+                                                <p class="small fst-italic mb-0 text-dark">
+                                                    Alasan: "{{ Str::limit($notif->alasan_eskalasi, 50) }}"
+                                                </p>
+                                            </div>
+                                            @endif
+
+                                            <small class="text-muted d-block mt-2">{{ $notif->updated_at->diffForHumans() }}</small>
                                         </div>
                                     </a>
                                 </li>
                                 @empty
                                 <li>
-                                    <p class="text-center text-muted small my-3">Tidak ada notifikasi baru.</p>
+                                    <p class="text-center text-muted small my-3">Tidak ada notifikasi eskalasi baru.</p>
                                 </li>
                                 @endforelse
                                 <li class="border-top"><a href="{{ route('admin.permohonan.index') }}" class="dropdown-item text-center small py-2">Lihat semua permohonan</a></li>
@@ -169,14 +198,11 @@
                         </li>
                         <li class="nav-item dropdown ms-2">
                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-tie fs-4 me-2"></i>
+                                <i class="fs-4 me-2"></i>
                                 {{ Auth::user()->name ?? 'Kepala Bidang' }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2">
-                                <li><a class="dropdown-item" href="#">Profil</a></li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
+
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf

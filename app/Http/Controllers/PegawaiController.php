@@ -9,6 +9,7 @@ use App\Models\Feedback;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class PegawaiController extends Controller
 {
@@ -52,38 +53,9 @@ class PegawaiController extends Controller
             ->toArray();
         $totalPermohonan = PermohonanData::count();
 
-        // === Jenis Kelamin ===
-        // $jumlah_laki = Pegawai::where('jenisKelamin', 'M')->where('periode_data', $periodeTerbaru)->count();
-        // $jumlah_perempuan = Pegawai::where('jenisKelamin', 'F')->where('periode_data', $periodeTerbaru)->count();
-
-        //Agama
-        // $agamaData = Pegawai::where('periode_data', $periodeTerbaru)
-        //     ->select('agama')
-        //     ->get()
-        //     ->groupBy('agama')
-        //     ->map(fn($group) => $group->count());
-
-        // === Tingkat Pendidikan ===
-        // $pendidikanData = Pegawai::whereNotNull('tkPendidikanTerakhir')
-        //     ->where('periode_data', $periodeTerbaru)
-        //     ->select('tkPendidikanTerakhir')
-        //     ->get()
-        //     ->groupBy('tkPendidikanTerakhir')
-        //     ->map(fn($group) => $group->count());
-
-
         $totalBulanIni = PermohonanData::whereMonth('created_at', now()->month)->count();
         $selesaiBulanIni = PermohonanData::where('status', 'selesai')->whereMonth('created_at', now()->month)->count();
         $persentaseSelesai = $totalBulanIni > 0 ? round(($selesaiBulanIni / $totalBulanIni) * 100) : 0;
-
-        // $bulanIni = Carbon::now()->month;
-        // $permohonanBulanIni = PermohonanData::whereMonth('created_at', $bulanIni)->count();
-        // $permohonanSelesai = PermohonanData::whereMonth('created_at', $bulanIni)->where('status', 'selesai')->count();
-
-        // $persentasePelayanan = $permohonanBulanIni > 0
-        //     ? round(($permohonanSelesai / $permohonanBulanIni) * 100, 2)
-        //     : 0;
-
 
         return view('admin.index', [
             // 'jumlah_laki' => $jumlah_laki,
@@ -109,35 +81,53 @@ class PegawaiController extends Controller
 
 
     public function feedbackIndex(Request $request)
-{
-    $user = auth()->user();
+    {
+        $user = auth()->user();
 
-    $sortableColumns = ['created_at', 'rating'];
-    $sort = in_array($request->query('sort'), $sortableColumns) ? $request->query('sort') : 'created_at';
-    $direction = in_array($request->query('direction'), ['asc', 'desc']) ? $request->query('direction') : 'desc';
+        $sortableColumns = ['created_at', 'rating'];
+        $sort = in_array($request->query('sort'), $sortableColumns) ? $request->query('sort') : 'created_at';
+        $direction = in_array($request->query('direction'), ['asc', 'desc']) ? $request->query('direction') : 'desc';
 
-    $feedbacks = Feedback::with(['user', 'permohonan'])
-                        ->orderBy($sort, $direction)
-                        ->paginate(10); 
+        $query = Feedback::with(['user', 'permohonan']);
 
-    if ($user -> role == 'admin') {
-        return view('admin.feedback', [
-            'feedbacks' => $feedbacks,
-            'sort' => $sort,
-            'direction' => $direction
-        ]);
+        $overallAverageRating = Feedback::avg('rating');
+
+        if ($request->filled('rating') && $request->rating != 'semua') {
+            $query->where('rating', $request->rating);
+        }
+
+
+        $filteredAverageRating = $query->clone()->avg('rating');
+        $query->orderBy($sort, $direction);
+        $feedbacks = $query->paginate(10);
+
+
+        $feedbacks = $query->orderBy($sort, $direction)
+            ->paginate(10)
+            ->withQueryString();
+
+        if ($user->role == 'admin') {
+            return view('admin.feedback', [
+                'feedbacks' => $feedbacks,
+                'sort' => $sort,
+                'direction' => $direction,
+                'overallAverageRating' => $overallAverageRating,
+                'filteredAverageRating' => $filteredAverageRating
+            ]);
+        }
+
+        if ($user->role == 'kepala') {
+            return view('kepala.feedback', [
+                'feedbacks' => $feedbacks,
+                'sort' => $sort,
+                'direction' => $direction,
+                'overallAverageRating' => $overallAverageRating,
+                'filteredAverageRating' => $filteredAverageRating
+            ]);
+        }
+
+        abort(403, 'Akses Ditolak');
     }
-
-    if ($user-> role == 'kepala') {
-        return view('kepala.feedback', [
-            'feedbacks' => $feedbacks,
-            'sort' => $sort,
-            'direction' => $direction
-        ]);
-    }
-
-    abort(403, 'Akses Ditolak');
-}
 
 
     public function statistik()
@@ -178,20 +168,16 @@ class PegawaiController extends Controller
 
         // === 4. PERMOHONAN PER JENIS DATA (TOP 5) ===
         $allJenisData = PermohonanData::pluck('jenis_data');
-        
+
         $kriteriaCounts = [];
-        
-        // 2. Loop melalui setiap baris data yang diambil
+
         foreach ($allJenisData as $jsonData) {
-            // Hanya proses jika data adalah JSON yang valid (dari filter builder)
-            if (\Illuminate\Support\Str::isJson($jsonData)) {
+            if (Str::isJson($jsonData)) {
                 $kriteriaList = json_decode($jsonData, true);
                 if (is_array($kriteriaList)) {
-                    // 3. Loop melalui setiap kriteria di dalam JSON
                     foreach ($kriteriaList as $item) {
                         if (isset($item['kriteria'])) {
                             $kriteriaName = $item['kriteria'];
-                            // Tambahkan atau +1 counter untuk kriteria tersebut
                             if (!isset($kriteriaCounts[$kriteriaName])) {
                                 $kriteriaCounts[$kriteriaName] = 0;
                             }
@@ -201,14 +187,12 @@ class PegawaiController extends Controller
                 }
             }
         }
-        
-        // 4. Urutkan kriteria dari yang paling banyak diminta
+
         arsort($kriteriaCounts);
-        
+
         // 5. Ambil 5 teratas
         $topKriteria = array_slice($kriteriaCounts, 0, 5, true);
-        
-        // 6. Siapkan data final untuk dikirim ke chart
+
         $jenisDataLabels = array_keys($topKriteria);
         $jenisDataCount = array_values($topKriteria);
 
@@ -235,8 +219,30 @@ class PegawaiController extends Controller
             $feedbackCounts->get(5, 0),
         ];
 
-        // Kirim semua data yang sudah diolah ke view
-        return view('admin.statistik', compact(
+        // === 7. ASAL INSTANSI PERMOHONAN ===
+        $asalInstansi = PermohonanData::groupBy('asal')
+            ->select('asal', DB::raw('count(*) as count'))
+            ->whereNotNull('asal')
+            ->pluck('count', 'asal');
+
+        // === 8. Perbandingan Ditolak ===
+        $ditolakBulanIni = PermohonanData::where('status', 'ditolak')
+            ->whereYear('updated_at', now()->year)
+            ->whereMonth('updated_at', now()->month)
+            ->count();
+
+        $ditolakBulanLalu = PermohonanData::where('status', 'ditolak')
+            ->whereYear('updated_at', now()->subMonth()->year)
+            ->whereMonth('updated_at', now()->subMonth()->month)
+            ->count();
+
+        $perbandinganDitolakLabels = [now()->subMonth()->translatedFormat('F Y'), now()->translatedFormat('F Y')];
+        $perbandinganDitolakData = [$ditolakBulanLalu, $ditolakBulanIni];
+
+        $asalLabels = $asalInstansi->keys()->map(fn($asal) => ucfirst($asal));
+        $asalData = $asalInstansi->values();
+
+        $data = compact(
             'trenLabels',
             'trenData',
             'statusLabels',
@@ -247,8 +253,19 @@ class PegawaiController extends Controller
             'topUserLabels',
             'topUserCount',
             'feedbackLabels',
-            'feedbackData'
-        ));
+            'feedbackData',
+            'perbandinganDitolakLabels',
+            'perbandinganDitolakData',
+            'asalLabels',
+            'asalData'
+        );
+
+
+        if (auth()->user()->role === 'kepala') {
+            return view('kepala.statistik', $data);
+        }
+
+        return view('admin.statistik', $data);
     }
 
 
